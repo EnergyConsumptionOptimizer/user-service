@@ -5,7 +5,10 @@ import { UserID } from "../domain/UserID";
 import bcrypt from "bcrypt";
 import { UserFactory } from "../domain/UserFactory";
 import { UserRole } from "../domain/UserRole";
-import { InvalidCredentials, UserNotFoundError } from "../domain/errors/errors";
+import {
+  InvalidCredentialsError,
+  UserNotFoundError,
+} from "../domain/errors/errors";
 
 export class UserServiceImpl implements UserService {
   private readonly SALT_ROUNDS = 10;
@@ -78,7 +81,7 @@ export class UserServiceImpl implements UserService {
 
   async resetAdminPassword(resetCode: string, password: string): Promise<User> {
     if (resetCode != this.RESET_CODE) {
-      throw new InvalidCredentials();
+      throw new InvalidCredentialsError();
     }
     const admin = await this.userRepository.findUserByUsername("admin");
 

@@ -19,7 +19,14 @@ export class InvalidIDError extends Error {
   }
 }
 
-export class InvalidCredentials extends Error {
+export class InvalidRefreshTokenError extends Error {
+  constructor() {
+    super("Invalid refresh token");
+    this.name = "InvalidRefreshToken";
+  }
+}
+
+export class InvalidCredentialsError extends Error {
   constructor() {
     super("Invalid credentials");
     this.name = "InvalidCredentials";
