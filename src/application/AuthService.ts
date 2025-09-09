@@ -8,7 +8,6 @@ import {
   UserNotFoundError,
 } from "../domain/errors/errors";
 import { AccessTokenPayload } from "../domain/AccessTokenPayload";
-import { User } from "../domain/User";
 import { compare } from "bcrypt";
 
 export class AuthServiceImpl implements AuthService {
@@ -86,11 +85,7 @@ export class AuthServiceImpl implements AuthService {
     return { accessToken: accessToken, refreshToken: refreshToken };
   }
 
-  async verify(token: string): Promise<User | null> {
-    const payload = await this.tokenService.verifyToken(token);
-    if (!payload) return null;
-
-    const user = await this.userRepository.findUserById(payload.id);
-    return user || null;
+  async verify(token: string): Promise<AccessTokenPayload | null> {
+    return this.tokenService.verifyToken(token);
   }
 }

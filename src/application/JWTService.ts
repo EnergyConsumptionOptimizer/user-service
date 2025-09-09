@@ -1,4 +1,4 @@
-import jwt, { SignOptions, VerifyOptions } from "jsonwebtoken";
+import jwt, { SignOptions } from "jsonwebtoken";
 import type { StringValue } from "ms";
 import { TokenService } from "../domain/ports/TokenService";
 import { AccessTokenPayload } from "../domain/AccessTokenPayload";
@@ -48,8 +48,7 @@ export class JWTService implements TokenService {
 
   async verifyToken(token: string): Promise<AccessTokenPayload | null> {
     try {
-      const options: VerifyOptions = {};
-      return jwt.verify(token, this.jwtSecret, options) as AccessTokenPayload;
+      return jwt.verify(token, this.jwtSecret) as AccessTokenPayload;
     } catch {
       return null;
     }
