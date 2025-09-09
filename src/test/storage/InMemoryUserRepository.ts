@@ -3,13 +3,16 @@ import { User } from "../../domain/User";
 import { UserRole } from "../../domain/UserRole";
 import { v4 as uuidv4, validate } from "uuid";
 import { UserID } from "../../domain/UserID";
-import { ConflictError } from "../../domain/errors/ConflictError";
-import { NotFoundError } from "../../domain/errors/NotFoundError";
+import {
+  InvalidIDError,
+  UsernameConflictError,
+  UserNotFoundError,
+} from "../../domain/errors/errors";
 
 export class InMemoryUserRepository implements UserRepository {
   private users: User[] = [];
 
-  async getHouseholdUsers(): Promise<User[]> {
+  async findAllHouseholdUsers(): Promise<User[]> {
     return this.users
       .filter((user) => user.role === UserRole.HOUSEHOLD)
       .map((user) => ({ ...user }));
@@ -29,12 +32,12 @@ export class InMemoryUserRepository implements UserRepository {
 
     const existingUser = this.users.find((u) => u.username === user.username);
     if (existingUser) {
-      throw new ConflictError("Username " + user.username + " already exists");
+      throw new UsernameConflictError(user.username);
     }
 
     const newUser: User = {
       ...user,
-      id: new UserID(id),
+      id: { value: id },
     };
 
     this.users.push(newUser);
@@ -48,13 +51,22 @@ export class InMemoryUserRepository implements UserRepository {
     return user ? { ...user } : null;
   }
 
+  async findHouseholdUserById(id: UserID) {
+    this.validateUserID(id.value);
+
+    const user = this.users.find(
+      (u) => u.id.value === id.value && u.role === UserRole.HOUSEHOLD,
+    );
+    return user ? { ...user } : null;
+  }
+
   async updateUser(user: User): Promise<User> {
     this.validateUserID(user.id.value);
 
     const userIndex = this.users.findIndex((u) => u.id.value === user.id.value);
 
     if (userIndex === -1) {
-      throw new NotFoundError("User not found for update");
+      throw new UserNotFoundError();
     }
 
     const existingUser = this.users.find(
@@ -62,27 +74,33 @@ export class InMemoryUserRepository implements UserRepository {
     );
 
     if (existingUser) {
-      throw new ConflictError("Username " + user.username + " already exists");
+      throw new UsernameConflictError(user.username);
     }
 
+    const currentUser = this.users[userIndex];
+
     const updatedUser: User = {
-      id: user.id,
-      username: user.username,
+      id: currentUser.id,
+      username:
+        currentUser.role === UserRole.ADMIN
+          ? currentUser.username
+          : user.username,
       password: user.password,
-      role: this.users[userIndex].role,
+      role: currentUser.role,
     };
 
     this.users[userIndex] = updatedUser;
+
     return { ...updatedUser };
   }
 
-  async removeUser(user: User): Promise<void> {
+  async removeHouseholdUser(user: User): Promise<void> {
     this.validateUserID(user.id.value);
 
     const userIndex = this.users.findIndex((u) => u.id.value === user.id.value);
 
     if (userIndex === -1) {
-      throw new NotFoundError("User not found for deletion");
+      throw new UserNotFoundError();
     }
 
     this.users.splice(userIndex, 1);
@@ -90,7 +108,7 @@ export class InMemoryUserRepository implements UserRepository {
 
   private validateUserID(value: string) {
     if (!validate(value)) {
-      throw new NotFoundError(`Invalid user ID format: ${value}`);
+      throw new InvalidIDError();
     }
   }
 
