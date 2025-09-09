@@ -37,20 +37,12 @@ export interface UserRepository {
   findAllHouseholdUsers(): Promise<User[]>;
 
   /**
-   * Updates the details of the admin user.
+   * Updates the details of a user.
    *
-   * @param user - The admin user entity with updated information.
+   * @param user - The user entity with updated information.
    * @returns A promise that resolves to the updated user.
    */
-  updateAdminUser(user: User): Promise<User>;
-
-  /**
-   * Updates the details of an existing household user.
-   *
-   * @param user - The household user entity with updated information.
-   * @returns A promise that resolves to the updated user.
-   */
-  updateHouseholdUser(user: User): Promise<User>;
+  updateUser(user: User): Promise<User>;
 
   /**
    * Adds a new household user.

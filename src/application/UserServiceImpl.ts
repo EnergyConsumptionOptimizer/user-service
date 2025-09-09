@@ -4,7 +4,7 @@ import { User } from "../domain/User";
 import { UserID } from "../domain/UserID";
 import bcrypt from "bcrypt";
 import { UserFactory } from "../domain/UserFactory";
-import { UserRole } from "../domain/UserRole";
+
 import {
   InvalidCredentialsError,
   UserNotFoundError,
@@ -47,7 +47,7 @@ export class UserServiceImpl implements UserService {
       username: username.trim(),
     };
 
-    return this.userRepository.updateHouseholdUser(updatedUser);
+    return this.userRepository.updateUser(updatedUser);
   }
 
   async updatePassword(id: UserID, password: string): Promise<User> {
@@ -64,10 +64,7 @@ export class UserServiceImpl implements UserService {
       password: hashedPassword,
     };
 
-    if (user.role === UserRole.ADMIN)
-      return this.userRepository.updateAdminUser(updatedUser);
-
-    return this.userRepository.updateHouseholdUser(updatedUser);
+    return this.userRepository.updateUser(updatedUser);
   }
 
   async deleteUser(id: UserID): Promise<void> {
@@ -96,6 +93,6 @@ export class UserServiceImpl implements UserService {
       password: hashedPassword,
     };
 
-    return this.userRepository.updateAdminUser(updatedUser);
+    return this.userRepository.updateUser(updatedUser);
   }
 }
