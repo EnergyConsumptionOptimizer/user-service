@@ -1,5 +1,5 @@
-import { User } from "../User";
 import { AccessToken } from "../AccessToken";
+import { AccessTokenPayload } from "../AccessTokenPayload";
 
 /**
  * Service interface for handling authentication and authorization.
@@ -23,12 +23,13 @@ export interface AuthService {
   logout(username: string): Promise<void>;
 
   /**
-   * Verifies the validity of an access token and retrieves the associated user.
+   * Validates an access token and extracts its payload.
    *
-   * @param token - The access token to verify.
-   * @returns A promise that resolves to the user if the token is valid, or `null` if invalid or expired.
+   * @param token - The JWT to validate.
+   * @returns A promise that resolves with the decoded payload if valid,
+   *          or `null` if the token is invalid or expired.
    */
-  verify(token: string): Promise<User | null>;
+  verify(token: string): Promise<AccessTokenPayload | null>;
 
   /**
    * Refreshes an expired or soon-to-expire access token with a new one.
