@@ -1,1 +1,1 @@
-export const InvalidRequest = { error: "Invalid request" };
+export const UserNotFound = { error: "User not found" };
