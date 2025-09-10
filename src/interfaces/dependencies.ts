@@ -18,4 +18,4 @@ export const authController = new AuthController(authService);
 export const userController = new UserController(userService);
 
 // ===== Middleware =====
-export const authMiddleware = new AuthMiddleware(jwtService);
+export const authMiddleware = new AuthMiddleware(authService);
