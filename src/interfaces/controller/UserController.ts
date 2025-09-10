@@ -145,7 +145,7 @@ export class UserController {
         return response.status(409).json({ message: error.message });
       }
 
-      return response.status(500).json({ message: "Internal server error" });
+      return response.status(400).json();
     }
   };
 
