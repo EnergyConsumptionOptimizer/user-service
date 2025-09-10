@@ -2,13 +2,10 @@ import { AuthService } from "../../domain/ports/AuthService";
 import { Request, Response } from "express";
 import { InvalidCredentialsError } from "../../domain/errors/errors";
 
-export class UserController {
+export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  async login(
-    request: Request<string, string>,
-    response: Response,
-  ): Promise<Response> {
+  login = async (request: Request, response: Response): Promise<Response> => {
     try {
       const { username, password } = request.body;
       const tokens = await this.authService.login(username, password);
@@ -19,5 +16,5 @@ export class UserController {
       }
       return response.status(500).json({ message: "Internal server error" });
     }
-  }
+  };
 }

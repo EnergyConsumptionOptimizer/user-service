@@ -11,14 +11,13 @@ import { UserID } from "../../domain/UserID";
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  async createHouseholdUser(
+  createHouseholdUser = async (
     request: Request,
     response: Response,
-  ): Promise<Response> {
+  ): Promise<Response> => {
     try {
-      const { username, password } = request.body as Record<string, string>;
+      const { username, password } = request.body;
       await this.userService.createHouseholdUser(username, password);
-
       return response
         .status(201)
         .json({ message: "User registered successfully" });
@@ -26,12 +25,14 @@ export class UserController {
       if (error instanceof UsernameConflictError) {
         return response.status(409).json({ message: error.message });
       }
-
       return response.status(500).json({ message: "Internal server error" });
     }
-  }
+  };
 
-  async deleteUser(request: Request, response: Response): Promise<Response> {
+  deleteUser = async (
+    request: Request,
+    response: Response,
+  ): Promise<Response> => {
     try {
       const { id } = request.params as Record<string, string>;
       await this.userService.deleteUser({ value: id });
@@ -49,12 +50,12 @@ export class UserController {
 
       return response.status(500).json({ message: "Internal server error" });
     }
-  }
+  };
 
-  async resetAdminPassword(
+  resetAdminPassword = async (
     request: Request,
     response: Response,
-  ): Promise<Response> {
+  ): Promise<Response> => {
     try {
       const { resetCode, newPassword } = request.body as Record<string, string>;
       await this.userService.resetAdminPassword(resetCode, newPassword);
@@ -70,12 +71,12 @@ export class UserController {
 
       return response.status(500).json({ message: "Internal server error" });
     }
-  }
+  };
 
-  async changePassword(
+  changePassword = async (
     request: Request,
     response: Response,
-  ): Promise<Response> {
+  ): Promise<Response> => {
     try {
       const { id, newPassword } = request.body as Record<string, string>;
       const userId: UserID = { value: id };
@@ -94,12 +95,12 @@ export class UserController {
 
       return response.status(500).json({ message: "Internal server error" });
     }
-  }
+  };
 
-  async changeUsername(
+  changeUsername = async (
     request: Request,
     response: Response,
-  ): Promise<Response> {
+  ): Promise<Response> => {
     try {
       const { id, newUsername } = request.body as Record<string, string>;
       const userId: UserID = { value: id };
@@ -117,9 +118,9 @@ export class UserController {
 
       return response.status(500).json({ message: "Internal server error" });
     }
-  }
+  };
 
-  async test(_request: Request, response: Response): Promise<Response> {
+  test = async (_request: Request, response: Response): Promise<Response> => {
     return response.status(200).send("Test successful");
-  }
+  };
 }
