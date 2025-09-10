@@ -72,13 +72,13 @@ export class UserController {
     }
   };
 
-  deleteUser = async (
+  deleteHouseholdUser = async (
     request: Request,
     response: Response,
   ): Promise<Response> => {
     try {
       const { id } = request.params;
-      await this.userService.deleteUser({ value: id });
+      await this.userService.deleteHouseholdUser({ value: id });
 
       return response
         .status(204)

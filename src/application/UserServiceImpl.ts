@@ -78,7 +78,7 @@ export class UserServiceImpl implements UserService {
     return this.userRepository.updateUser(updatedUser);
   }
 
-  async deleteUser(id: UserID): Promise<void> {
+  async deleteHouseholdUser(id: UserID): Promise<void> {
     const existingUser = await this.userRepository.findUserById(id);
     if (!existingUser) {
       throw new UserNotFoundError();

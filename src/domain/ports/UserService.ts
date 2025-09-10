@@ -48,12 +48,12 @@ export interface UserService {
   createHouseholdUser(username: string, password: string): Promise<User>;
 
   /**
-   * Deletes a user by their unique identifier.
+   * Deletes an existing household user by their unique identifier.
    *
-   * @param id - The unique identifier of the user to delete.
-   * @returns A promise that resolves once the user has been removed.
+   * @param id - The unique identifier of the household user to delete.
+   * @returns A promise that resolves once the household user has been removed.
    */
-  deleteUser(id: UserID): Promise<void>;
+  deleteHouseholdUser(id: UserID): Promise<void>;
 
   /**
    * Resets the admin's password using a valid reset code.
