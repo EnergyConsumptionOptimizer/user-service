@@ -7,6 +7,9 @@ export interface AuthenticatedRequest extends Request {
   user?: AccessTokenPayload;
 }
 
+export const AuthenticationRequired = { error: "Authentication required" };
+export const Forbidden = { error: "Forbidden: Insufficient permissions" };
+
 export class AuthMiddleware {
   constructor(private readonly authService: AuthService) {}
 
@@ -17,12 +20,14 @@ export class AuthMiddleware {
   ): Promise<void> => {
     try {
       const authHeader = req.headers.authorization;
+
       if (!authHeader?.startsWith("Bearer ")) {
         res.status(401).json({ error: "Access token is required" });
         return;
       }
 
       const token = authHeader.split(" ")[1];
+
       const user = await this.authService.verify(token);
 
       if (!user) {
@@ -44,12 +49,12 @@ export class AuthMiddleware {
       const user = req.user;
 
       if (!user) {
-        res.status(401).json({ error: "Authentication required" });
+        res.status(401).json(AuthenticationRequired);
         return;
       }
 
       if (!roles.includes(user.role)) {
-        res.status(403).json({ error: "Insufficient permissions" });
+        res.status(403).json(Forbidden);
         return;
       }
 
@@ -65,7 +70,7 @@ export class AuthMiddleware {
     const { id } = req.params;
 
     if (!user) {
-      res.status(401).json({ error: "Authentication required" });
+      res.status(401).json(AuthenticationRequired);
       return;
     }
 
@@ -74,6 +79,6 @@ export class AuthMiddleware {
       return;
     }
 
-    res.status(403).json({ error: "Forbidden" });
+    res.status(403).json(Forbidden);
   };
 }
