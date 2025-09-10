@@ -5,6 +5,7 @@ import {
   UserNotFoundError,
   InvalidIDError,
   InvalidResetCodeError,
+  InvalidCredentialsError,
 } from "../../domain/errors/errors";
 import { UserID } from "../../domain/UserID";
 
@@ -84,13 +85,11 @@ export class UserController {
 
       return response.status(204).send();
     } catch (error: unknown) {
-      const error_ = error as Error;
-      if (error_.message === "User not found") {
-        return response.status(404).json({ message: error_.message });
+      if (error instanceof UserNotFoundError) {
+        return response.status(404).json({ message: error.message });
       }
-
-      if (error_.message === "Invalid credentials") {
-        return response.status(401).json({ message: error_.message });
+      if (error instanceof InvalidCredentialsError) {
+        return response.status(401).json({ message: error.message });
       }
 
       return response.status(500).json({ message: "Internal server error" });
@@ -107,13 +106,11 @@ export class UserController {
       await this.userService.updateHouseholdUsername(userId, newUsername);
       return response.status(204).send();
     } catch (error: unknown) {
-      const error_ = error as Error;
-      if (error_.message === "User not found") {
-        return response.status(404).json({ message: error_.message });
+      if (error instanceof UserNotFoundError) {
+        return response.status(404).json({ message: error.message });
       }
-
-      if (error_.message === "Username is already taken.") {
-        return response.status(409).json({ message: error_.message });
+      if (error instanceof UsernameConflictError) {
+        return response.status(409).json({ message: error.message });
       }
 
       return response.status(500).json({ message: "Internal server error" });
