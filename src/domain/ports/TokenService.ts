@@ -21,7 +21,7 @@ export interface TokenService {
   /**
    * Verifies and decodes a token
    * @param token - The JWT string to verify
-   * @returns Promise resolving to the payload if valid, null if invalid
+   * @returns Promise resolving to the payload if valid
    */
-  verifyToken(token: string): Promise<AccessTokenPayload | null>;
+  verifyToken(token: string): Promise<AccessTokenPayload | undefined>;
 }

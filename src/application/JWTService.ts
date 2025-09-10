@@ -46,11 +46,11 @@ export class JWTService implements TokenService {
     return this.generateJWT(payload, this.jwtRefreshExpiresIn);
   }
 
-  async verifyToken(token: string): Promise<AccessTokenPayload | null> {
+  async verifyToken(token: string): Promise<AccessTokenPayload | undefined> {
     try {
       return jwt.verify(token, this.jwtSecret) as AccessTokenPayload;
     } catch {
-      return null;
+      return;
     }
   }
 }
