@@ -3,6 +3,8 @@ import { Request, Response } from "express";
 import { InvalidCredentialsError } from "../../../domain/errors/errors";
 import { FieldRequiredError } from "../errors/FieldRequired";
 import { InvalidRequest } from "../errors/InvalidRequest";
+import { AccessToken } from "../../../domain/AccessToken";
+import { AccessTokenMapper } from "../../../presentation/AccessTokenMapper";
 
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -18,8 +20,12 @@ export class AuthController {
       if (!password) {
         return response.status(400).json(FieldRequiredError("Password"));
       }
-      const token = await this.authService.login(username, password);
-      return response.status(200).json(token);
+      const token: AccessToken = await this.authService.login(
+        username,
+        password,
+      );
+
+      return response.status(200).json(AccessTokenMapper.toDTO(token));
     } catch (error) {
       if (error instanceof InvalidCredentialsError) {
         return response.status(422).json({ message: error.message });
@@ -38,7 +44,7 @@ export class AuthController {
 
       const token = await this.authService.refresh(refreshToken);
 
-      return res.status(200).json(token);
+      return res.status(200).json(AccessTokenMapper.toDTO(token));
     } catch {
       return res.status(400).json(InvalidRequest);
     }
