@@ -1,8 +1,8 @@
-import { AuthService } from "../../domain/ports/AuthService";
+import { AuthService } from "../../../domain/ports/AuthService";
 import { Request, Response } from "express";
-import { InvalidCredentialsError } from "../../domain/errors/errors";
-import { FieldRequiredError } from "../api/errors/FieldRequired";
-import { InvalidRequest } from "../api/errors/InvalidRequest";
+import { InvalidCredentialsError } from "../../../domain/errors/errors";
+import { FieldRequiredError } from "../errors/FieldRequired";
+import { InvalidRequest } from "../errors/InvalidRequest";
 
 export class AuthController {
   constructor(private readonly authService: AuthService) {}

@@ -1,11 +1,11 @@
 import { type Request, type Response } from "express";
-import { UserService } from "../../domain/ports/UserService";
+import { UserService } from "../../../domain/ports/UserService";
 import {
   UsernameConflictError,
   UserNotFoundError,
   InvalidResetCodeError,
-} from "../../domain/errors/errors";
-import { UserID } from "../../domain/UserID";
+} from "../../../domain/errors/errors";
+import { UserID } from "../../../domain/UserID";
 
 export class UserController {
   constructor(private readonly userService: UserService) {}

@@ -1,9 +1,9 @@
 import { AuthController } from "./controller/AuthController";
-import { AuthServiceImpl } from "../application/AuthService";
-import { InMemoryUserRepository } from "../test/storage/InMemoryUserRepository";
-import { JWTService } from "../application/JWTService";
+import { AuthServiceImpl } from "../../application/AuthService";
+import { InMemoryUserRepository } from "../../test/storage/InMemoryUserRepository";
+import { JWTService } from "../../application/JWTService";
 import { UserController } from "./controller/UserController";
-import { UserServiceImpl } from "../application/UserServiceImpl";
+import { UserServiceImpl } from "../../application/UserServiceImpl";
 import { AuthMiddleware } from "./middleware/AuthMiddleware";
 
 // ===== Services =====

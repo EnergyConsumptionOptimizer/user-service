@@ -1,7 +1,7 @@
 import { type NextFunction, type Request, type Response } from "express";
-import { AccessTokenPayload } from "../../domain/AccessTokenPayload";
-import { AuthService } from "../../domain/ports/AuthService";
-import { UserRole } from "../../domain/UserRole";
+import { AccessTokenPayload } from "../../../domain/AccessTokenPayload";
+import { AuthService } from "../../../domain/ports/AuthService";
+import { UserRole } from "../../../domain/UserRole";
 
 export interface AuthenticatedRequest extends Request {
   user?: AccessTokenPayload;

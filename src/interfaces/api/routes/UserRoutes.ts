@@ -1,5 +1,5 @@
 import express from "express";
-import { UserRole } from "../../domain/UserRole";
+import { UserRole } from "../../../domain/UserRole";
 import { authMiddleware, userController } from "../dependencies";
 
 const userRouter = express.Router();
