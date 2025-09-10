@@ -46,19 +46,8 @@ export class AuthServiceImpl implements AuthService {
   }
 
   async logout(username: string): Promise<void> {
-    const payload = await this.tokenService.verifyToken(username);
+    const user = await this.userRepository.findUserByUsername(username);
 
-    if (!payload) {
-      throw new InvalidCredentialsError();
-    }
-    const userPayload: AccessTokenPayload = {
-      id: payload.id,
-      username: payload.username,
-      role: payload.role,
-    };
-    const user = await this.userRepository.findUserByUsername(
-      userPayload.username,
-    );
     if (!user) {
       throw new UserNotFoundError();
     }

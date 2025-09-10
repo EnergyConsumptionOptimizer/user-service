@@ -5,6 +5,7 @@ import { FieldRequiredError } from "../errors/FieldRequired";
 import { InvalidRequest } from "../errors/InvalidRequest";
 import { AccessToken } from "../../../domain/AccessToken";
 import { AccessTokenMapper } from "../../../presentation/AccessTokenMapper";
+import { AuthenticatedRequest } from "../middleware/AuthMiddleware";
 
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -31,6 +32,16 @@ export class AuthController {
         return response.status(422).json({ message: error.message });
       }
       return response.status(400).json(InvalidRequest);
+    }
+  };
+
+  logout = async (request: AuthenticatedRequest, res: Response) => {
+    try {
+      await this.authService.logout(request.user.username);
+
+      return res.status(200).send();
+    } catch {
+      return res.status(400).json(InvalidRequest);
     }
   };
 
