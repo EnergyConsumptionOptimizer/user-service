@@ -9,13 +9,13 @@ userRouter.post(
   "/change-password",
   authMiddleware.authenticateToken,
   authMiddleware.authorizeRole(UserRole.HOUSEHOLD),
-  userController.changePassword,
+  userController.updatePassword,
 );
 userRouter.post(
   "/change-username",
   authMiddleware.authenticateToken,
   authMiddleware.authorizeRole(UserRole.HOUSEHOLD),
-  userController.changeUsername,
+  userController.updateUsername,
 );
 
 userRouter.post(

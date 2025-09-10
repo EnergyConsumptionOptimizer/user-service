@@ -3,14 +3,26 @@ import { UserService } from "../../domain/ports/UserService";
 import {
   UsernameConflictError,
   UserNotFoundError,
-  InvalidIDError,
   InvalidResetCodeError,
-  InvalidCredentialsError,
 } from "../../domain/errors/errors";
 import { UserID } from "../../domain/UserID";
 
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  getHouseholdUsers = async (
+    request: Request,
+    response: Response,
+  ): Promise<Response> => {
+    try {
+      const householdUsers = await this.userService.getHouseholdUsers();
+      return response.json({
+        "household-users": householdUsers,
+      });
+    } catch {
+      return response.status(500).send();
+    }
+  };
 
   createHouseholdUser = async (
     request: Request,
@@ -18,15 +30,37 @@ export class UserController {
   ): Promise<Response> => {
     try {
       const { username, password } = request.body;
+      if (!username || !password) {
+        return response
+          .status(400)
+          .json({ error: "Username and password are required" });
+      }
       await this.userService.createHouseholdUser(username, password);
       return response
         .status(201)
         .json({ message: "User registered successfully" });
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof UsernameConflictError) {
         return response.status(409).json({ message: error.message });
       }
-      return response.status(500).json({ message: "Internal server error" });
+      return response.status(400).json();
+    }
+  };
+
+  getUser = async (request: Request, response: Response): Promise<Response> => {
+    try {
+      const { id } = request.params;
+      const userId: UserID = { value: id };
+
+      const user = await this.userService.getUser(userId);
+
+      if (!user) {
+        return response.status(404).json({ error: "User not found" });
+      }
+
+      return response.json(user);
+    } catch {
+      return response.status(500).send();
     }
   };
 
@@ -39,17 +73,14 @@ export class UserController {
       await this.userService.deleteUser({ value: id });
 
       return response
-        .status(200)
+        .status(206)
         .json({ message: `User ${id} deleted successfully` });
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof UserNotFoundError) {
         return response.status(404).json({ message: error.message });
       }
-      if (error instanceof InvalidIDError) {
-        return response.status(400).json({ message: error.message });
-      }
 
-      return response.status(500).json({ message: "Internal server error" });
+      return response.status(400).json();
     }
   };
 
@@ -59,44 +90,45 @@ export class UserController {
   ): Promise<Response> => {
     try {
       const { resetCode, newPassword } = request.body as Record<string, string>;
+      if (!resetCode || !newPassword) {
+        return response
+          .status(400)
+          .json({ error: "Reset code and password are required" });
+      }
+
       await this.userService.resetAdminPassword(resetCode, newPassword);
-
       return response.status(204).send();
-    } catch (error: unknown) {
-      if (error instanceof UserNotFoundError) {
-        return response.status(404).json({ message: error.message });
-      }
+    } catch (error) {
       if (error instanceof InvalidResetCodeError) {
-        return response.status(400).json({ message: error.message });
+        return response.status(409).json({ message: error.message });
       }
 
-      return response.status(500).json({ message: "Internal server error" });
+      return response.status(400).json();
     }
   };
 
-  changePassword = async (
+  updatePassword = async (
     request: Request,
     response: Response,
   ): Promise<Response> => {
     try {
       const { id, newPassword } = request.body as Record<string, string>;
       const userId: UserID = { value: id };
+      if (!newPassword) {
+        return response.status(400).json({ error: "Password is required" });
+      }
       await this.userService.updatePassword(userId, newPassword);
-
       return response.status(204).send();
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof UserNotFoundError) {
         return response.status(404).json({ message: error.message });
       }
-      if (error instanceof InvalidCredentialsError) {
-        return response.status(401).json({ message: error.message });
-      }
 
-      return response.status(500).json({ message: "Internal server error" });
+      return response.status(400).json();
     }
   };
 
-  changeUsername = async (
+  updateUsername = async (
     request: Request,
     response: Response,
   ): Promise<Response> => {
