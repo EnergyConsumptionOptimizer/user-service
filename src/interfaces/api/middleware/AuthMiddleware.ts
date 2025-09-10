@@ -14,7 +14,7 @@ export class AuthMiddleware {
   constructor(private readonly authService: AuthService) {}
 
   authenticate = async (
-    req: AuthenticatedRequest,
+    req: Request,
     res: Response,
     next: NextFunction,
   ): Promise<void> => {
@@ -35,7 +35,7 @@ export class AuthMiddleware {
         return;
       }
 
-      req.user = user; // Attach user
+      (req as AuthenticatedRequest).user = user; // Attach user
       next();
     } catch (error) {
       console.error("Authentication error:", error);
@@ -45,8 +45,8 @@ export class AuthMiddleware {
 
   requireRole =
     (...roles: UserRole[]) =>
-    (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
-      const user = req.user;
+    (req: Request, res: Response, next: NextFunction): void => {
+      const user = (req as AuthenticatedRequest).user;
 
       if (!user) {
         res.status(401).json(AuthenticationRequired);
@@ -62,11 +62,11 @@ export class AuthMiddleware {
     };
 
   requireOwnershipOrAdmin = (
-    req: AuthenticatedRequest,
+    req: Request,
     res: Response,
     next: NextFunction,
   ): void => {
-    const user = req.user;
+    const user = (req as AuthenticatedRequest).user;
     const { id } = req.params;
 
     if (!user) {
