@@ -10,6 +10,7 @@ export class AuthController {
   login = async (request: Request, response: Response): Promise<Response> => {
     try {
       const { username, password } = request.body;
+
       if (!username) {
         return response.status(400).json(FieldRequiredError("Username"));
       }
@@ -21,7 +22,7 @@ export class AuthController {
       return response.status(200).json(token);
     } catch (error) {
       if (error instanceof InvalidCredentialsError) {
-        return response.status(402).json({ message: error.message });
+        return response.status(422).json({ message: error.message });
       }
       return response.status(400).json(InvalidRequest);
     }
