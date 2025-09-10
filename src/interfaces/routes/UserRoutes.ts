@@ -19,14 +19,28 @@ userRouter.post(
 );
 
 userRouter.post(
-  "/register",
+  "/create-household",
   authMiddleware.authenticateToken,
   authMiddleware.authorizeRole(UserRole.ADMIN),
   userController.createHouseholdUser,
 );
 
+userRouter.get(
+  "/:id",
+  authMiddleware.authenticateToken,
+  authMiddleware.authorizeRole(UserRole.ADMIN),
+  userController.getUser,
+);
+
+userRouter.get(
+  "/household-users",
+  authMiddleware.authenticateToken,
+  authMiddleware.authorizeRole(UserRole.ADMIN),
+  userController.getHouseholdUsers,
+);
+
 userRouter.delete(
-  "/:username",
+  "/:id",
   authMiddleware.authenticateToken,
   authMiddleware.authorizeRole(UserRole.ADMIN),
   userController.deleteUser,
