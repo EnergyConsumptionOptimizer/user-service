@@ -85,7 +85,7 @@ export class AuthServiceImpl implements AuthService {
     return { accessToken: accessToken, refreshToken: refreshToken };
   }
 
-  async verify(token: string): Promise<AccessTokenPayload | null> {
+  async verify(token: string): Promise<AccessTokenPayload | undefined> {
     return this.tokenService.verifyToken(token);
   }
 }

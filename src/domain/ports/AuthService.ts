@@ -29,7 +29,7 @@ export interface AuthService {
    * @returns A promise that resolves with the decoded payload if valid,
    *          or `null` if the token is invalid or expired.
    */
-  verify(token: string): Promise<AccessTokenPayload | null>;
+  verify(token: string): Promise<AccessTokenPayload | undefined>;
 
   /**
    * Refreshes an expired or soon-to-expire access token with a new one.
