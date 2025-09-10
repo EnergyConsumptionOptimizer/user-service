@@ -6,7 +6,7 @@ import bcrypt from "bcrypt";
 import { UserFactory } from "../domain/UserFactory";
 
 import {
-  InvalidCredentialsError,
+  InvalidResetCodeError,
   UserNotFoundError,
 } from "../domain/errors/errors";
 
@@ -89,8 +89,9 @@ export class UserServiceImpl implements UserService {
 
   async resetAdminPassword(resetCode: string, password: string): Promise<User> {
     if (resetCode != this.RESET_CODE) {
-      throw new InvalidCredentialsError();
+      throw new InvalidResetCodeError();
     }
+
     const admin = await this.userRepository.findUserByUsername("admin");
 
     if (!admin) {
