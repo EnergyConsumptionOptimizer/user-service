@@ -26,4 +26,20 @@ export class AuthController {
       return response.status(400).json(InvalidRequest);
     }
   };
+
+  refresh = async (request: Request, res: Response): Promise<Response> => {
+    try {
+      const { refreshToken } = request.body;
+
+      if (!refreshToken) {
+        return res.status(400).json(FieldRequiredError("Refresh token"));
+      }
+
+      const token = await this.authService.refresh(refreshToken);
+
+      return res.status(200).json(token);
+    } catch {
+      return res.status(400).json(InvalidRequest);
+    }
+  };
 }
