@@ -8,7 +8,7 @@ export class UsernameConflictError extends Error {
 export class UserNotFoundError extends Error {
   constructor() {
     super("User not found");
-    this.name = "UserNotFound";
+    this.name = "UserNotFoundError";
   }
 }
 
@@ -22,13 +22,20 @@ export class InvalidIDError extends Error {
 export class InvalidRefreshTokenError extends Error {
   constructor() {
     super("Invalid refresh token");
-    this.name = "InvalidRefreshToken";
+    this.name = "InvalidRefreshTokenError";
   }
 }
 
 export class InvalidCredentialsError extends Error {
   constructor() {
     super("Invalid credentials");
-    this.name = "InvalidCredentials";
+    this.name = "InvalidCredentialsError";
+  }
+}
+
+export class InvalidResetCodeError extends Error {
+  constructor() {
+    super("Invalid reset code");
+    this.name = "InvalidResetCodeError";
   }
 }
