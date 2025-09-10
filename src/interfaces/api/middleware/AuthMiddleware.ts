@@ -4,7 +4,7 @@ import { AuthService } from "../../../domain/ports/AuthService";
 import { UserRole } from "../../../domain/UserRole";
 
 export interface AuthenticatedRequest extends Request {
-  user?: AccessTokenPayload;
+  user: AccessTokenPayload;
 }
 
 export const AuthenticationRequired = { error: "Authentication required" };
