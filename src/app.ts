@@ -1,21 +1,11 @@
 import "dotenv/config";
 import express from "express";
-import routes from "./interfaces/routes/routes";
+import router from "./interfaces/routes/Routes";
 
 const app = express();
 app.use(express.json());
+app.use(router);
 
-const startServer = async () => {
-  try {
-    app.use(routes);
-
-    app.listen(process.env.PORT, () => {
-      console.log(`Server on http://localhost:${process.env.PORT}`);
-    });
-  } catch (error) {
-    console.error("Failed to start server:", error);
-    process.exit(1);
-  }
-};
-
-startServer();
+app.listen(3000, () => {
+  console.log("Server running on port 3000");
+});
