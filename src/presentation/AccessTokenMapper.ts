@@ -1,8 +1,8 @@
-import { AccessTokensDTO } from "./AccessTokensDTO";
+import { AccessTokenDTO } from "./AccessTokenDTO";
 import { AccessToken } from "../domain/AccessToken";
 
 export const AccessTokenMapper = {
-  toDTO(token: AccessToken): AccessTokensDTO {
+  toDTO(token: AccessToken): AccessTokenDTO {
     return {
       accessToken: token.accessToken,
       refreshToken: token.refreshToken,
