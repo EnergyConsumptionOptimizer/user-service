@@ -121,7 +121,8 @@ export class UserController {
     response: Response,
   ): Promise<Response> => {
     try {
-      const { id, newPassword } = request.body as Record<string, string>;
+      const { newPassword } = request.body;
+      const { id } = request.params;
       const userId: UserID = { value: id };
 
       if (!newPassword) {
@@ -145,7 +146,8 @@ export class UserController {
     response: Response,
   ): Promise<Response> => {
     try {
-      const { id, newUsername } = request.body;
+      const { id } = request.params;
+      const { newUsername } = request.body;
 
       const userId: UserID = { value: id };
 
