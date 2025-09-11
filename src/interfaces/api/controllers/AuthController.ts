@@ -35,9 +35,11 @@ export class AuthController {
     }
   };
 
-  logout = async (request: AuthenticatedRequest, res: Response) => {
+  logout = async (request: Request, res: Response) => {
     try {
-      await this.authService.logout(request.user.username);
+      await this.authService.logout(
+        (request as AuthenticatedRequest).user.username,
+      );
 
       return res.status(200).send();
     } catch {
