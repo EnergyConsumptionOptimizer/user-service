@@ -6,12 +6,12 @@ import householdUserRouter from "./HouseholdUserRoutes";
 
 const router = express.Router();
 
-router.use("/auth", authRoutes);
+router.use("/api/auth", authRoutes);
 
-router.use("/users", userRoutes);
+router.use("/api/users", userRoutes);
 
-router.use("/admin", adminRouter);
+router.use("/api/admin", adminRouter);
 
-router.use("/household-user", householdUserRouter);
+router.use("/api/household-users", householdUserRouter);
 
 export default router;
