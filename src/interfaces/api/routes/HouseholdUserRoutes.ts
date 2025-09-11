@@ -26,6 +26,11 @@ householdUserRouter.put(
   userController.updateUsername,
 );
 
-householdUserRouter.delete("/:id", userController.deleteHouseholdUser);
+householdUserRouter.delete(
+  "/:id",
+  authMiddleware.authenticate,
+  authMiddleware.requireRole(UserRole.ADMIN),
+  userController.deleteHouseholdUser,
+);
 
 export default householdUserRouter;
