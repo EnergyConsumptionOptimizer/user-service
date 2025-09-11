@@ -7,6 +7,10 @@ authRouter.post("/login", authController.login);
 
 authRouter.post("/logout", authMiddleware.authenticate, authController.logout);
 
-authRouter.post("/refresh", authController.refresh);
+authRouter.post(
+  "/refresh",
+  authMiddleware.authenticate,
+  authController.refresh,
+);
 
 export default authRouter;

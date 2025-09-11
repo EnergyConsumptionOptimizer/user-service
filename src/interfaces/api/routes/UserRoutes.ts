@@ -1,29 +1,10 @@
-import express from "express";
+import { Router } from "express";
+
 import { UserRole } from "../../../domain/UserRole";
+
 import { authMiddleware, userController } from "../dependencies";
 
-const userRouter = express.Router();
-
-// User management
-userRouter.post(
-  "/change-password",
-  authMiddleware.authenticate,
-  authMiddleware.requireRole(UserRole.HOUSEHOLD),
-  userController.updatePassword,
-);
-userRouter.post(
-  "/change-username",
-  authMiddleware.authenticate,
-  authMiddleware.requireRole(UserRole.HOUSEHOLD),
-  userController.updateUsername,
-);
-
-userRouter.post(
-  "/create-household",
-  authMiddleware.authenticate,
-  authMiddleware.requireRole(UserRole.ADMIN),
-  userController.createHouseholdUser,
-);
+const userRouter = Router();
 
 userRouter.get(
   "/:id",
@@ -32,32 +13,11 @@ userRouter.get(
   userController.getUser,
 );
 
-userRouter.get(
-  "/household-users",
+userRouter.put(
+  "/:id/password",
   authMiddleware.authenticate,
-  authMiddleware.requireRole(UserRole.ADMIN),
-  userController.getHouseholdUsers,
-);
-
-userRouter.delete(
-  "/:id",
-  authMiddleware.authenticate,
-  authMiddleware.requireRole(UserRole.ADMIN),
-  userController.deleteUser,
-);
-
-userRouter.post(
-  "/reset-password",
-  authMiddleware.authenticate,
-  authMiddleware.requireRole(UserRole.ADMIN),
-  userController.resetAdminPassword,
-);
-
-userRouter.get(
-  "/test",
-  // AuthenticateToken,
-  authMiddleware.requireRole(UserRole.ADMIN, UserRole.HOUSEHOLD),
-  userController.test,
+  authMiddleware.requireOwnershipOrAdmin,
+  userController.updatePassword,
 );
 
 export default userRouter;
