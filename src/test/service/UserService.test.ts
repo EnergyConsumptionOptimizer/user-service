@@ -222,16 +222,16 @@ describe("UserService", () => {
     });
 
     it("should delete user successfully", async () => {
-      await userService.deleteUser(householdUser.id);
+      await userService.deleteHouseholdUser(householdUser.id);
 
       const result = await repository.findUserById(householdUser.id);
       expect(result).toBeNull();
     });
 
     it("should throw error when user not found", async () => {
-      await expect(userService.deleteUser({ value: uuidv4() })).rejects.toThrow(
-        UserNotFoundError,
-      );
+      await expect(
+        userService.deleteHouseholdUser({ value: uuidv4() }),
+      ).rejects.toThrow(UserNotFoundError);
     });
   });
 });
