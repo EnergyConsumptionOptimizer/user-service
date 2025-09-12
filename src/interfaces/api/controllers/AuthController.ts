@@ -1,6 +1,9 @@
 import { AuthService } from "../../../domain/ports/AuthService";
 import { Request, Response } from "express";
-import { InvalidCredentialsError } from "../../../domain/errors/errors";
+import {
+  InvalidCredentialsError,
+  InvalidRefreshTokenError,
+} from "../../../domain/errors/errors";
 import { FieldRequiredError } from "../errors/FieldRequired";
 import { InvalidRequest } from "../errors/InvalidRequest";
 import { AccessToken } from "../../../domain/AccessToken";
@@ -58,7 +61,10 @@ export class AuthController {
       const token = await this.authService.refresh(refreshToken);
 
       return res.status(200).json(AccessTokenMapper.toDTO(token));
-    } catch {
+    } catch (error) {
+      if (error instanceof InvalidRefreshTokenError) {
+        return res.status(401).json({ message: "Invalid refresh token" });
+      }
       return res.status(400).json(InvalidRequest);
     }
   };

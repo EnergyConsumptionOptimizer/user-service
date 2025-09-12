@@ -12,7 +12,7 @@ export function authRoutes(
 
   router.post("/logout", authMiddleware.authenticate, authController.logout);
 
-  router.post("/refresh", authMiddleware.authenticate, authController.refresh);
+  router.post("/refresh", authController.refresh);
 
   return router;
 }
