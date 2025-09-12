@@ -109,7 +109,7 @@ export class UserController {
       return response.status(204).send();
     } catch (error) {
       if (error instanceof InvalidResetCodeError) {
-        return response.status(409).json({ message: error.message });
+        return response.status(422).json({ message: error.message });
       }
 
       return response.status(400).json();

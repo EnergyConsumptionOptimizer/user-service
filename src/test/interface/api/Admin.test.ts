@@ -59,7 +59,7 @@ describe("Admin API", () => {
 
     it("rejects the request if the reset code is invalid", async () => {
       const res = await resetPassword("INVALID_CODE", "irrelevantPassword!");
-      expect(res.status).toBe(409);
+      expect(res.status).toBe(422);
     });
 
     it("prevents non-admin users from resetting admin passwords", async () => {
