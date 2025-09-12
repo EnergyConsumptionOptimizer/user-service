@@ -5,7 +5,7 @@ import { UserRole } from "../../../domain/UserRole";
 import { UserController } from "../controllers/UserController";
 import { AuthMiddleware } from "../middleware/AuthMiddleware";
 
-export function HouseholdUserRouter(
+export function householdUserRoutes(
   authMiddleware: AuthMiddleware,
   userController: UserController,
 ): Router {

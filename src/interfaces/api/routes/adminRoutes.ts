@@ -1,27 +1,19 @@
 import { Router } from "express";
-
 import { UserRole } from "../../../domain/UserRole";
 import { AuthMiddleware } from "../middleware/AuthMiddleware";
 import { UserController } from "../controllers/UserController";
 
-export function UserRouter(
-  authMiddleware: AuthMiddleware,
+export function adminRoutes(
   userController: UserController,
+  authMiddleware: AuthMiddleware,
 ): Router {
   const router = Router();
 
-  router.get(
-    "/:id",
+  router.post(
+    "/reset-password",
     authMiddleware.authenticate,
     authMiddleware.requireRole(UserRole.ADMIN),
-    userController.getUser,
-  );
-
-  router.put(
-    "/:id/password",
-    authMiddleware.authenticate,
-    authMiddleware.requireOwnershipOrAdmin,
-    userController.updatePassword,
+    userController.resetAdminPassword,
   );
 
   return router;
