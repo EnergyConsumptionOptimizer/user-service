@@ -224,10 +224,12 @@ describe("api/household-users/", () => {
     });
 
     it("should return 409 when trying to use an already existing username", async () => {
+      const user = await userService.createHouseholdUser("u1", "password");
+
       const response = await request(app)
         .put(buildChangeUsernameUrl(householdUserDavid.id))
         .send({
-          newUsername: householdUserMark.username,
+          newUsername: user.username,
         })
         .set("Authorization", adminAccessToken);
 
