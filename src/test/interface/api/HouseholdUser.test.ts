@@ -10,12 +10,10 @@ import {
   mockHouseholdUserMark,
 } from "../../storage/MockUsers";
 import { UserID } from "../../../domain/UserID";
-import {
-  userRepository,
-  userService,
-} from "../../../interfaces/api/dependencies";
+
 import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
+import { userRepository, userService } from "../dependencies";
 
 describe("api/household-users/", () => {
   const url = "/api/household-users";
