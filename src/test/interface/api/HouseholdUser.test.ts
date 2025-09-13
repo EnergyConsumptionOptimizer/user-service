@@ -162,7 +162,7 @@ describe("api/household-users/", () => {
       const response = await request(app)
         .put(buildChangeUsernameUrl(user.id))
         .send({
-          newUsername: "riley",
+          username: "riley",
         })
         .set("Authorization", adminAccessToken);
 
@@ -173,7 +173,7 @@ describe("api/household-users/", () => {
       const response = await request(app)
         .put(buildChangeUsernameUrl(householdUserMark.id))
         .send({
-          newUsername: "mark01",
+          username: "mark01",
         })
         .set("Authorization", markAccessToken);
 
@@ -184,7 +184,7 @@ describe("api/household-users/", () => {
       const response = await request(app)
         .put(buildChangeUsernameUrl(householdUserMark.id))
         .send({
-          newUsername: "username",
+          username: "username",
         });
 
       expect(response.status).toBe(401);
@@ -195,7 +195,7 @@ describe("api/household-users/", () => {
         .put(buildChangeUsernameUrl(householdUserDavid.id))
         .set("Authorization", markAccessToken)
         .send({
-          newUsername: "alex",
+          username: "alex",
         });
 
       expect(response.status).toBe(403);
@@ -205,7 +205,7 @@ describe("api/household-users/", () => {
       const response = await request(app)
         .put(buildChangeUsernameUrl(admin.id))
         .send({
-          newUsername: "username",
+          username: "username",
         })
         .set("Authorization", adminAccessToken);
 
@@ -216,7 +216,7 @@ describe("api/household-users/", () => {
       const response = await request(app)
         .put(buildChangeUsernameUrl({ value: uuidv4() }))
         .send({
-          newUsername: "username",
+          username: "username",
         })
         .set("Authorization", adminAccessToken);
 
@@ -229,7 +229,7 @@ describe("api/household-users/", () => {
       const response = await request(app)
         .put(buildChangeUsernameUrl(householdUserDavid.id))
         .send({
-          newUsername: user.username,
+          username: user.username,
         })
         .set("Authorization", adminAccessToken);
 

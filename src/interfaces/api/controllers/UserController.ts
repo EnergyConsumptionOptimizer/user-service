@@ -97,19 +97,19 @@ export class UserController {
     response: Response,
   ): Promise<Response> => {
     try {
-      const { resetCode, newPassword } = request.body;
-      if (!resetCode || !newPassword) {
+      const { resetCode, password } = request.body;
+      if (!resetCode || !password) {
         return response
           .status(400)
           .json({ error: "Reset code and password are required" });
       }
 
-      await this.userService.resetAdminPassword(resetCode, newPassword);
+      await this.userService.resetAdminPassword(resetCode, password);
 
       return response.status(204).send();
     } catch (error) {
       if (error instanceof InvalidResetCodeError) {
-        return response.status(422).json({ message: error.message });
+        return response.status(401).json({ message: error.message });
       }
 
       return response.status(400).json();
@@ -147,11 +147,15 @@ export class UserController {
   ): Promise<Response> => {
     try {
       const { id } = request.params;
-      const { newUsername } = request.body;
+      const { username } = request.body;
+
+      if (!username) {
+        return response.status(400).json(FieldRequiredError("username"));
+      }
 
       const userId: UserID = { value: id };
 
-      await this.userService.updateHouseholdUsername(userId, newUsername);
+      await this.userService.updateHouseholdUsername(userId, username);
 
       return response.status(204).send();
     } catch (error) {
@@ -162,11 +166,8 @@ export class UserController {
         return response.status(409).json({ message: error.message });
       }
 
-      return response.status(400).json();
+      console.log(error);
+      return response.status(400).json({ e: error });
     }
-  };
-
-  test = async (_request: Request, response: Response): Promise<Response> => {
-    return response.status(200).send("Test successful");
   };
 }

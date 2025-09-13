@@ -93,8 +93,6 @@ describe("UserService", () => {
 
       const result = await userService.getHouseholdUsers();
 
-      console.log("");
-
       expect(result).toHaveLength(2);
       expect(result[0].role).toBe(UserRole.HOUSEHOLD);
     });
