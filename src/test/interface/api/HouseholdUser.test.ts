@@ -167,14 +167,14 @@ describe("api/household-users/", () => {
     });
   });
 
-  describe("PUT /:id/username - Update username", () => {
+  describe("PATCH /:id/username - Update username", () => {
     const changeUsernameRequest = async (
       id: UserID,
       username?: string,
       token?: string,
     ) =>
       request(app)
-        .put(url + "/" + id.value + "/username")
+        .patch(url + "/" + id.value + "/username")
         .send(
           username
             ? {

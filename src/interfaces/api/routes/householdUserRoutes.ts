@@ -25,7 +25,7 @@ export function householdUserRoutes(
     userController.createHouseholdUser,
   );
 
-  router.put(
+  router.patch(
     "/:id/username",
     authMiddleware.authenticate,
     authMiddleware.requireOwnershipOrAdmin,

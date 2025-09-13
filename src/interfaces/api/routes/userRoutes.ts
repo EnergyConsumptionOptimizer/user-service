@@ -17,7 +17,7 @@ export function userRoutes(
     userController.getUser,
   );
 
-  router.put(
+  router.patch(
     "/:id/password",
     authMiddleware.authenticate,
     authMiddleware.requireOwnershipOrAdmin,
