@@ -1,14 +1,14 @@
 import { AuthController } from "./controllers/AuthController";
 import { AuthServiceImpl } from "../../application/AuthService";
-import { InMemoryUserRepository } from "../../test/storage/InMemoryUserRepository";
 import { JWTService } from "../../application/JWTService";
 import { UserController } from "./controllers/UserController";
 import { UserServiceImpl } from "../../application/UserServiceImpl";
 import { AuthMiddleware } from "./middleware/AuthMiddleware";
 import { router } from "./routes/router";
+import { MongooseUserRepository } from "../../storage/mongo/MongooseUserRepository";
 
 // ===== Repository =====
-export const userRepository = new InMemoryUserRepository();
+export const userRepository = new MongooseUserRepository();
 
 // ===== Services =====
 export const jwtService = new JWTService();
