@@ -155,9 +155,12 @@ export class UserController {
 
       const userId: UserID = { value: id };
 
-      await this.userService.updateHouseholdUsername(userId, username);
+      const user = await this.userService.updateHouseholdUsername(
+        userId,
+        username,
+      );
 
-      return response.status(204).send();
+      return response.status(201).json(UserMapper.toDTO(user));
     } catch (error) {
       if (error instanceof UserNotFoundError) {
         return response.status(404).json({ message: error.message });
