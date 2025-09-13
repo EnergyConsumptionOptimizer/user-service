@@ -121,17 +121,17 @@ export class UserController {
     response: Response,
   ): Promise<Response> => {
     try {
-      const { newPassword } = request.body;
+      const { password } = request.body;
       const { id } = request.params;
       const userId: UserID = { value: id };
 
-      if (!newPassword) {
+      if (!password) {
         return response.status(400).json(FieldRequiredError("password"));
       }
 
-      await this.userService.updatePassword(userId, newPassword);
+      const user = await this.userService.updatePassword(userId, password);
 
-      return response.status(204).send();
+      return response.json(UserMapper.toDTO(user));
     } catch (error) {
       if (error instanceof UserNotFoundError) {
         return response.status(404).json({ message: error.message });

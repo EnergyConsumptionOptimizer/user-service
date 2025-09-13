@@ -1,6 +1,4 @@
 import { Router } from "express";
-
-import { UserRole } from "../../../domain/UserRole";
 import { AuthMiddleware } from "../middleware/AuthMiddleware";
 import { UserController } from "../controllers/UserController";
 
@@ -10,12 +8,7 @@ export function userRoutes(
 ): Router {
   const router = Router();
 
-  router.get(
-    "/:id",
-    authMiddleware.authenticate,
-    authMiddleware.requireRole(UserRole.ADMIN),
-    userController.getUser,
-  );
+  router.get("/:id", authMiddleware.authenticate, userController.getUser);
 
   router.patch(
     "/:id/password",
