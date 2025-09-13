@@ -32,7 +32,7 @@ export class AuthController {
       return response.status(200).json(AccessTokenMapper.toDTO(token));
     } catch (error) {
       if (error instanceof InvalidCredentialsError) {
-        return response.status(422).json({ message: error.message });
+        return response.status(401).json({ message: error.message });
       }
       return response.status(400).json(InvalidRequest);
     }

@@ -56,8 +56,8 @@ describe("Auth API Integration", () => {
     it("rejects login attempts with incorrect credentials", async () => {
       const res1 = await login(adminUser.username, "wrongpass");
       const res2 = await login("nonexistentuser", "password");
-      expect(res1.status).toBe(422);
-      expect(res2.status).toBe(422);
+      expect(res1.status).toBe(401);
+      expect(res2.status).toBe(401);
     });
 
     it("requires both username and password", async () => {
