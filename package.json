@@ -6,7 +6,7 @@
     "start": "node dist/app.js",
     "start:dev": "ts-node-dev --respawn --transpile-only src/app.ts",
     "test": "npx vitest run",
-    "lint": "npx eslint 'src/**/*.{ts,js}'",
+    "lint": "npx eslint \"src/**/*.{ts,js}\"",
     "lint:fix": "npx eslint 'src/**/*.{ts,js}' --fix",
     "format": "prettier --write \"src/**/*.{ts,js}\" --ignore-unknown",
     "docs": "npx typedoc --entryPointStrategy expand ./src --plugin typedoc-github-theme",
@@ -52,6 +52,7 @@
     "rimraf": "^6.0.1",
     "semantic-release": "^24.2.7",
     "semantic-release-preconfigured-conventional-commits": "^1.1.133",
+    "supertest": "^7.1.4",
     "ts-node-dev": "^2.0.0",
     "typedoc-github-theme": "^0.3.1",
     "typescript": "^5.9.2"
