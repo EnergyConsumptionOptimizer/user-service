@@ -16,7 +16,7 @@ import {
   UsernameConflictError,
   UserNotFoundError,
 } from "../../domain/errors/errors";
-import dotenv from "dotenv";
+import { RESET_CODE } from "../interface/dependencies";
 
 describe("UserService", () => {
   let userService: UserService;
@@ -24,7 +24,7 @@ describe("UserService", () => {
 
   beforeAll(() => {
     repository = new InMemoryUserRepository();
-    userService = new UserServiceImpl(repository);
+    userService = new UserServiceImpl(repository, RESET_CODE);
   });
 
   describe("createHouseholdUser", () => {
@@ -172,9 +172,6 @@ describe("UserService", () => {
   });
 
   describe("resetAdminPassword", async () => {
-    dotenv.config();
-    const RESET_CODE = process.env.RESET_CODE;
-
     beforeAll(async () => {
       repository.clear();
       await repository.addNewHouseholdUser(mockAdminUser);

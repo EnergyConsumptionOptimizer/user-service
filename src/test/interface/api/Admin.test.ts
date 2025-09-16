@@ -2,7 +2,7 @@ import { beforeAll, describe, it, expect } from "vitest";
 import bcrypt from "bcrypt";
 import request from "supertest";
 import { app } from "../app";
-import { userRepository } from "../dependencies";
+import { RESET_CODE, userRepository } from "../dependencies";
 import { mockAdminUser, mockHouseholdUserMark } from "../../storage/MockUsers";
 import { User } from "../../../domain/User";
 
@@ -40,9 +40,8 @@ describe("Admin API", () => {
   describe("POST /reset-password", () => {
     it("allows an admin to reset their password using a valid reset code", async () => {
       const password = "newPassword";
-      const validResetCode = process.env.RESET_CODE || "";
 
-      const res = await resetPassword(validResetCode, password);
+      const res = await resetPassword(RESET_CODE, password);
       expect(res.status).toBe(204);
 
       const oldLogin = await login(admin.username, mockAdminUser.password);
