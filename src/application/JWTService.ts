@@ -4,31 +4,11 @@ import { TokenService } from "../domain/ports/TokenService";
 import { AccessTokenPayload } from "../domain/AccessTokenPayload";
 
 export class JWTService implements TokenService {
-  private readonly jwtSecret: string;
-  private readonly jwtExpiresIn: StringValue;
-  private readonly jwtRefreshExpiresIn: StringValue;
-
   constructor(
-    jwtSecret = process.env.JWT_SECRET,
-    jwtExpiresIn = process.env.JWT_EXPIRES_IN,
-    jwtRefreshExpiresIn = process.env.JWT_REFRESH_EXPIRES_IN,
-  ) {
-    if (!jwtSecret) {
-      throw new Error("JWT_SECRET must be defined in the .env file");
-    }
-    if (!jwtExpiresIn) {
-      throw new Error("JWT_EXPIRES_IN must be defined in the .env file");
-    }
-    if (!jwtRefreshExpiresIn) {
-      throw new Error(
-        "JWT_REFRESH_EXPIRES_IN must be defined in the .env file",
-      );
-    }
-
-    this.jwtSecret = jwtSecret;
-    this.jwtExpiresIn = jwtExpiresIn as StringValue;
-    this.jwtRefreshExpiresIn = jwtRefreshExpiresIn as StringValue;
-  }
+    private readonly jwtSecret: string,
+    private readonly jwtExpiresIn: StringValue,
+    private readonly jwtRefreshExpiresIn: StringValue,
+  ) {}
 
   private generateJWT(
     payload: AccessTokenPayload,

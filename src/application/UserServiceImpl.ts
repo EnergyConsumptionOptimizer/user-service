@@ -12,20 +12,11 @@ import {
 
 export class UserServiceImpl implements UserService {
   private readonly SALT_ROUNDS = 10;
-  private readonly RESET_CODE: string;
 
   constructor(
     private readonly userRepository: UserRepository,
-    RESET_CODE = process.env.RESET_CODE,
-  ) {
-    if (!RESET_CODE) {
-      throw new Error(
-        "RESET_CODE must be defined in the .env file" + RESET_CODE,
-      );
-    }
-
-    this.RESET_CODE = RESET_CODE;
-  }
+    private readonly RESET_CODE: string,
+  ) {}
 
   async getHouseholdUsers(): Promise<User[]> {
     return await this.userRepository.findAllHouseholdUsers();
