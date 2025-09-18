@@ -7,6 +7,7 @@ import { authRoutes } from "./authRoutes";
 import { userRoutes } from "./userRoutes";
 import { adminRoutes } from "./adminRoutes";
 import { householdUserRoutes } from "./householdUserRoutes";
+import { internalRoutes } from "./internal/internalRoutes";
 
 export function router(
   authController: AuthController,
@@ -25,5 +26,8 @@ export function router(
     "/api/household-users",
     householdUserRoutes(authMiddleware, userController),
   );
+
+  router.use("/api/internal", internalRoutes(authController, authMiddleware));
+
   return router;
 }

@@ -3,16 +3,16 @@ import { AuthController } from "../../controllers/AuthController";
 import { AuthMiddleware } from "../../middleware/AuthMiddleware";
 import { authRoutes } from "../authRoutes";
 
-export function internalRouter(
+export function internalRoutes(
   authController: AuthController,
   authMiddleware: AuthMiddleware,
 ): Router {
-  const internalRouter = Router();
+  const router = Router();
 
-  internalRouter.use(
+  router.use(
     "/api-internal/verification",
     authRoutes(authController, authMiddleware),
   );
 
-  return internalRouter;
+  return router;
 }
