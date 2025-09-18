@@ -1,6 +1,6 @@
 import { env } from "./config";
 import express from "express";
-import { apiInternalRouter, apiRouter } from "./interfaces/api/dependencies";
+import { apiRouter } from "./interfaces/api/dependencies";
 import mongoose from "mongoose";
 
 const app = express();
@@ -14,7 +14,6 @@ if (!MONGO_URI) {
 
 app.use(express.json());
 app.use(apiRouter);
-app.use(apiInternalRouter);
 
 app.listen(PORT, async () => {
   console.log(`Server running on port ${PORT}`);

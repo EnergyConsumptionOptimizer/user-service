@@ -7,7 +7,6 @@ import { AuthMiddleware } from "./middleware/AuthMiddleware";
 import { router } from "./routes/router";
 import { MongooseUserRepository } from "../../storage/mongo/MongooseUserRepository";
 import { env } from "../../config";
-import { internalRouter } from "./routes/internal/router";
 
 // ===== Repository =====
 export const userRepository = new MongooseUserRepository();
@@ -30,4 +29,3 @@ export const authMiddleware = new AuthMiddleware(authService);
 
 // ===== Router =====
 export const apiRouter = router(authController, authMiddleware, userController);
-export const apiInternalRouter = internalRouter(authController, authMiddleware);
