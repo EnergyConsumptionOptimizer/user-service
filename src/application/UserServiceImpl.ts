@@ -19,19 +19,17 @@ export class UserServiceImpl implements UserService {
   ) {}
 
   async getHouseholdUsers(): Promise<User[]> {
-    return await this.userRepository.findAllHouseholdUsers();
+    return this.userRepository.findAllHouseholdUsers();
   }
 
   async getUser(id: UserID): Promise<User | null> {
-    return await this.userRepository.findUserById(id);
+    return this.userRepository.findUserById(id);
   }
 
   async createHouseholdUser(username: string, password: string): Promise<User> {
-    const hashedPassword = await bcrypt.hash(password, this.SALT_ROUNDS);
-
     const newHouseholdUser = new UserFactory().createHouseholdUser(
       username.toLowerCase().trim(),
-      hashedPassword,
+      await bcrypt.hash(password, this.SALT_ROUNDS),
     );
 
     return this.userRepository.addNewHouseholdUser(newHouseholdUser);
@@ -89,11 +87,9 @@ export class UserServiceImpl implements UserService {
       throw new UserNotFoundError();
     }
 
-    const hashedPassword = await bcrypt.hash(password, this.SALT_ROUNDS);
-
     const updatedUser: User = {
       ...admin,
-      password: hashedPassword,
+      password: await bcrypt.hash(password, this.SALT_ROUNDS),
     };
 
     return this.userRepository.updateUser(updatedUser);
