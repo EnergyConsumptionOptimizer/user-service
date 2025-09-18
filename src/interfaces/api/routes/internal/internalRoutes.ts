@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { AuthController } from "../../controllers/AuthController";
 import { AuthMiddleware } from "../../middleware/AuthMiddleware";
-import { authRoutes } from "../authRoutes";
+import { verificationRoutes } from "./verificationRoutes";
 
 export function internalRoutes(
   authController: AuthController,
@@ -9,10 +9,7 @@ export function internalRoutes(
 ): Router {
   const router = Router();
 
-  router.use(
-    "/api-internal/verification",
-    authRoutes(authController, authMiddleware),
-  );
+  router.use("/auth", verificationRoutes(authController, authMiddleware));
 
   return router;
 }
