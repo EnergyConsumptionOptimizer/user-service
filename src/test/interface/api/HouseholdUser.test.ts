@@ -272,7 +272,7 @@ describe("api/household-users/", () => {
     });
   });
 
-  describe("DELETE /:id/ - should return 404 when user does not exist", () => {
+  describe("DELETE /:id/ - Delete an household user", () => {
     const deleteHouseholdUserRequest = async (id: UserID, token?: string) =>
       request(app)
         .delete(url + "/" + id.value)
