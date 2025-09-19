@@ -69,7 +69,7 @@ export class UserController {
       return response.status(201).json(UserMapper.toDTO(user));
     } catch (error) {
       if (error instanceof UsernameConflictError) {
-        return response.status(409).json({ message: error.message });
+        return response.status(409).json({ error: error.message });
       }
       return response.status(500).send();
     }
@@ -95,7 +95,7 @@ export class UserController {
       return response.json(UserMapper.toDTO(user));
     } catch (error) {
       if (error instanceof UserNotFoundError) {
-        return response.status(404).json({ message: error.message });
+        return response.status(404).json({ error: error.message });
       }
 
       return response.status(500).send();
@@ -121,7 +121,7 @@ export class UserController {
       return response.status(204).send();
     } catch (error) {
       if (error instanceof InvalidResetCodeError) {
-        return response.status(401).json({ message: error.message });
+        return response.status(401).json({ error: error.message });
       }
 
       return response.status(500).send();
@@ -171,10 +171,10 @@ export class UserController {
 
       return response
         .status(204)
-        .json({ message: `User ${id} deleted successfully` });
+        .json({ message: "User deleted successfully" });
     } catch (error) {
       if (error instanceof UserNotFoundError) {
-        return response.status(404).json({ message: error.message });
+        return response.status(404).json({ error: error.message });
       }
 
       return response.status(500).send();
