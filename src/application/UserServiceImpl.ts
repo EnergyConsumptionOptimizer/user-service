@@ -68,12 +68,7 @@ export class UserServiceImpl implements UserService {
   }
 
   async deleteHouseholdUser(id: UserID): Promise<void> {
-    const existingUser = await this.userRepository.findHouseholdUserById(id);
-    if (!existingUser) {
-      throw new UserNotFoundError();
-    }
-
-    await this.userRepository.removeHouseholdUser(existingUser);
+    return this.userRepository.removeHouseholdUser(id);
   }
 
   async resetAdminPassword(resetCode: string, password: string): Promise<User> {

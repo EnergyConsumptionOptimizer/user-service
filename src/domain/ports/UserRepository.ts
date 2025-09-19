@@ -55,8 +55,8 @@ export interface UserRepository {
   /**
    * Removes a household user from the repository.
    *
-   * @param user - The user to remove.
+   * @param id - The id of the user to remove.
    * @returns A promise that resolves once the user has been removed.
    */
-  removeHouseholdUser(user: User): Promise<void>;
+  removeHouseholdUser(id: UserID): Promise<void>;
 }

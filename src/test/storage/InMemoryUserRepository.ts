@@ -27,23 +27,6 @@ export class InMemoryUserRepository implements UserRepository {
     }
   }
 
-  async addNewHouseholdUser(user: User): Promise<User> {
-    const id = uuidv4();
-
-    const existingUser = this.users.find((u) => u.username === user.username);
-    if (existingUser) {
-      throw new UsernameConflictError(user.username);
-    }
-
-    const newUser: User = {
-      ...user,
-      id: { value: id },
-    };
-
-    this.users.push(newUser);
-    return { ...newUser };
-  }
-
   async findUserById(id: UserID): Promise<User | null> {
     this.validateUserID(id.value);
 
@@ -58,6 +41,24 @@ export class InMemoryUserRepository implements UserRepository {
       (u) => u.id.value === id.value && u.role === UserRole.HOUSEHOLD,
     );
     return user ? { ...user } : null;
+  }
+
+  async addNewHouseholdUser(user: User): Promise<User> {
+    const id = uuidv4();
+
+    const existingUser = this.users.find((u) => u.username === user.username);
+
+    if (existingUser) {
+      throw new UsernameConflictError(user.username);
+    }
+
+    const newUser: User = {
+      ...user,
+      id: { value: id },
+    };
+
+    this.users.push(newUser);
+    return { ...newUser };
   }
 
   async updateUser(user: User): Promise<User> {
@@ -94,10 +95,12 @@ export class InMemoryUserRepository implements UserRepository {
     return { ...updatedUser };
   }
 
-  async removeHouseholdUser(user: User): Promise<void> {
-    this.validateUserID(user.id.value);
+  async removeHouseholdUser(id: UserID): Promise<void> {
+    this.validateUserID(id.value);
 
-    const userIndex = this.users.findIndex((u) => u.id.value === user.id.value);
+    const userIndex = this.users.findIndex(
+      (u) => u.id.value === id.value && u.role === UserRole.HOUSEHOLD,
+    );
 
     if (userIndex === -1) {
       throw new UserNotFoundError();

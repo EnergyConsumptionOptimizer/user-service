@@ -30,6 +30,18 @@ export class MongooseUserRepository implements UserRepository {
     }
   }
 
+  async findUserById(id: UserID): Promise<User | null> {
+    this.validateUserID(id.value);
+
+    const userDocument = await UserModel.findById(id.value).lean().exec();
+
+    if (!userDocument) {
+      return null;
+    }
+
+    return this.mapUserDocumentToDomain(userDocument);
+  }
+
   async addNewHouseholdUser(user: User): Promise<User> {
     const id = uuidv4();
 
@@ -48,18 +60,6 @@ export class MongooseUserRepository implements UserRepository {
       }
       throw error;
     }
-  }
-
-  async findUserById(id: UserID): Promise<User | null> {
-    this.validateUserID(id.value);
-
-    const userDocument = await UserModel.findById(id.value).lean().exec();
-
-    if (!userDocument) {
-      return null;
-    }
-
-    return this.mapUserDocumentToDomain(userDocument);
   }
 
   async findHouseholdUserById(id: UserID): Promise<User | null> {
@@ -125,10 +125,14 @@ export class MongooseUserRepository implements UserRepository {
     return this.mapUserDocumentToDomain(updatedDocument);
   }
 
-  async removeHouseholdUser(user: User): Promise<void> {
-    this.validateUserID(user.id.value);
+  async removeHouseholdUser(id: UserID): Promise<void> {
+    this.validateUserID(id.value);
 
-    const result = await UserModel.findByIdAndDelete(user.id.value).exec();
+    const result = await UserModel.findOneAndDelete({
+      _id: id.value,
+      role: UserRole.HOUSEHOLD,
+    }).exec();
+
     if (!result) {
       throw UserNotFoundError;
     }
