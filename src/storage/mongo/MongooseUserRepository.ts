@@ -42,6 +42,23 @@ export class MongooseUserRepository implements UserRepository {
     return this.mapUserDocumentToDomain(userDocument);
   }
 
+  async findHouseholdUserById(id: UserID): Promise<User | null> {
+    this.validateUserID(id.value);
+
+    const userDocument = await UserModel.findOne({
+      _id: id.value,
+      role: UserRole.HOUSEHOLD,
+    })
+      .lean()
+      .exec();
+
+    if (!userDocument) {
+      return null;
+    }
+
+    return this.mapUserDocumentToDomain(userDocument);
+  }
+
   async addNewHouseholdUser(user: User): Promise<User> {
     const id = uuidv4();
 
@@ -62,64 +79,29 @@ export class MongooseUserRepository implements UserRepository {
     }
   }
 
-  async findHouseholdUserById(id: UserID): Promise<User | null> {
-    this.validateUserID(id.value);
-
-    const userDocument = await UserModel.findOne({
-      _id: id.value,
-      role: UserRole.HOUSEHOLD,
-    })
-      .lean()
-      .exec();
-
-    if (!userDocument) {
-      return null;
-    }
-
-    return this.mapUserDocumentToDomain(userDocument);
-  }
-
-  private async checkUsernameAvailability(id: string, username: string) {
-    const user = await UserModel.findOne({
-      username: username,
-    })
-      .lean()
-      .exec();
-
-    if (!user) {
-      return true;
-    }
-
-    return user._id == id;
-  }
-
   async updateUser(user: User): Promise<User> {
     this.validateUserID(user.id.value);
 
-    const isUsernameAvailable = await this.checkUsernameAvailability(
-      user.id.value,
-      user.username,
-    );
+    let updatedDocument;
 
-    if (!isUsernameAvailable) throw new UsernameConflictError(user.username);
-
-    const currentUser = await UserModel.findById(user.id.value);
-
-    if (!currentUser) {
-      throw new UserNotFoundError();
+    try {
+      updatedDocument = await UserModel.findByIdAndUpdate(
+        user.id.value,
+        {
+          username: user.username,
+          password: user.password,
+        },
+        { new: true, runValidators: true },
+      ).exec();
+    } catch (error) {
+      if ((error as MongoError).code === 11000) {
+        throw new UsernameConflictError(user.username);
+      }
+      throw error;
     }
 
-    const updatedDocument = await UserModel.findByIdAndUpdate(
-      user.id.value,
-      {
-        username: user.username,
-        password: user.password,
-      },
-      { new: true, runValidators: true },
-    ).exec();
-
     if (!updatedDocument) {
-      throw new UsernameConflictError(user.username);
+      throw new UserNotFoundError();
     }
 
     return this.mapUserDocumentToDomain(updatedDocument);
@@ -134,7 +116,7 @@ export class MongooseUserRepository implements UserRepository {
     }).exec();
 
     if (!result) {
-      throw UserNotFoundError;
+      throw new UserNotFoundError();
     }
   }
 
