@@ -9,6 +9,7 @@ import { UserID } from "../../../domain/UserID";
 import { UserMapper } from "../../../presentation/UserMapper";
 import { UserNotFound } from "../errors/UserNotFound";
 import { FieldRequiredError } from "../errors/FieldRequired";
+import { InvalidRequest } from "../errors/InvalidRequest";
 
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -28,11 +29,30 @@ export class UserController {
     }
   };
 
+  getUser = async (request: Request, response: Response): Promise<Response> => {
+    try {
+      const { id } = request.params;
+      const userId: UserID = { value: id };
+
+      const user = await this.userService.getUser(userId);
+
+      if (!user) {
+        return response.status(404).json(UserNotFound);
+      }
+
+      return response.json(UserMapper.toDTO(user));
+    } catch {
+      return response.status(500).send();
+    }
+  };
+
   createHouseholdUser = async (
     request: Request,
     response: Response,
   ): Promise<Response> => {
     try {
+      if (!request.body) return response.status(400).json(InvalidRequest);
+
       const { username, password } = request.body;
 
       if (!username || !password) {
@@ -55,72 +75,13 @@ export class UserController {
     }
   };
 
-  getUser = async (request: Request, response: Response): Promise<Response> => {
-    try {
-      const { id } = request.params;
-      const userId: UserID = { value: id };
-
-      const user = await this.userService.getUser(userId);
-
-      if (!user) {
-        return response.status(404).json(UserNotFound);
-      }
-
-      return response.json(UserMapper.toDTO(user));
-    } catch {
-      return response.status(500).send();
-    }
-  };
-
-  deleteHouseholdUser = async (
-    request: Request,
-    response: Response,
-  ): Promise<Response> => {
-    try {
-      const { id } = request.params;
-      await this.userService.deleteHouseholdUser({ value: id });
-
-      return response
-        .status(204)
-        .json({ message: `User ${id} deleted successfully` });
-    } catch (error) {
-      if (error instanceof UserNotFoundError) {
-        return response.status(404).json({ message: error.message });
-      }
-
-      return response.status(500).send();
-    }
-  };
-
-  resetAdminPassword = async (
-    request: Request,
-    response: Response,
-  ): Promise<Response> => {
-    try {
-      const { resetCode, password } = request.body;
-      if (!resetCode || !password) {
-        return response
-          .status(400)
-          .json({ error: "Reset code and password are required" });
-      }
-
-      await this.userService.resetAdminPassword(resetCode, password);
-
-      return response.status(204).send();
-    } catch (error) {
-      if (error instanceof InvalidResetCodeError) {
-        return response.status(401).json({ message: error.message });
-      }
-
-      return response.status(500).send();
-    }
-  };
-
   updatePassword = async (
     request: Request,
     response: Response,
   ): Promise<Response> => {
     try {
+      if (!request.body) return response.status(400).json(InvalidRequest);
+
       const { password } = request.body;
       const { id } = request.params;
       const userId: UserID = { value: id };
@@ -141,11 +102,38 @@ export class UserController {
     }
   };
 
+  resetAdminPassword = async (
+    request: Request,
+    response: Response,
+  ): Promise<Response> => {
+    try {
+      if (!request.body) return response.status(400).json(InvalidRequest);
+
+      const { resetCode, password } = request.body;
+      if (!resetCode || !password) {
+        return response
+          .status(400)
+          .json({ error: "Reset code and password are required" });
+      }
+
+      await this.userService.resetAdminPassword(resetCode, password);
+
+      return response.status(204).send();
+    } catch (error) {
+      if (error instanceof InvalidResetCodeError) {
+        return response.status(401).json({ message: error.message });
+      }
+
+      return response.status(500).send();
+    }
+  };
+
   updateUsername = async (
     request: Request,
     response: Response,
   ): Promise<Response> => {
     try {
+      if (!request.body) return response.status(400).json(InvalidRequest);
       const { id } = request.params;
       const { username } = request.body;
 
@@ -167,6 +155,26 @@ export class UserController {
       }
       if (error instanceof UsernameConflictError) {
         return response.status(409).json({ error: error.message });
+      }
+
+      return response.status(500).send();
+    }
+  };
+
+  deleteHouseholdUser = async (
+    request: Request,
+    response: Response,
+  ): Promise<Response> => {
+    try {
+      const { id } = request.params;
+      await this.userService.deleteHouseholdUser({ value: id });
+
+      return response
+        .status(204)
+        .json({ message: `User ${id} deleted successfully` });
+    } catch (error) {
+      if (error instanceof UserNotFoundError) {
+        return response.status(404).json({ message: error.message });
       }
 
       return response.status(500).send();
