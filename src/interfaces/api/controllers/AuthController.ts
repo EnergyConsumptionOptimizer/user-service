@@ -15,6 +15,8 @@ export class AuthController {
 
   login = async (request: Request, response: Response): Promise<Response> => {
     try {
+      if (!request.body) return response.status(400).json(InvalidRequest);
+
       const { username, password } = request.body;
 
       if (!username) {
@@ -24,6 +26,7 @@ export class AuthController {
       if (!password) {
         return response.status(400).json(FieldRequiredError("Password"));
       }
+
       const token: AccessToken = await this.authService.login(
         username,
         password,
@@ -34,38 +37,42 @@ export class AuthController {
       if (error instanceof InvalidCredentialsError) {
         return response.status(401).json({ message: error.message });
       }
-      return response.status(400).json(InvalidRequest);
+
+      return response.status(500).send();
     }
   };
 
-  logout = async (request: Request, res: Response) => {
+  logout = async (request: Request, response: Response) => {
     try {
       await this.authService.logout(
         (request as AuthenticatedRequest).user.username,
       );
 
-      return res.status(200).send();
+      return response.status(200).send();
     } catch {
-      return res.status(400).json(InvalidRequest);
+      return response.status(500).send();
     }
   };
 
-  refresh = async (request: Request, res: Response): Promise<Response> => {
+  refresh = async (request: Request, response: Response): Promise<Response> => {
     try {
+      if (!request.body) return response.status(400).json(InvalidRequest);
+
       const { refreshToken } = request.body;
 
       if (!refreshToken) {
-        return res.status(400).json(FieldRequiredError("Refresh token"));
+        return response.status(400).json(FieldRequiredError("Refresh token"));
       }
 
       const token = await this.authService.refresh(refreshToken);
 
-      return res.status(200).json(AccessTokenMapper.toDTO(token));
+      return response.status(200).json(AccessTokenMapper.toDTO(token));
     } catch (error) {
       if (error instanceof InvalidRefreshTokenError) {
-        return res.status(401).json({ message: "Invalid refresh token" });
+        return response.status(401).json({ message: "Invalid refresh token" });
       }
-      return res.status(400).json(InvalidRequest);
+
+      return response.status(500).send();
     }
   };
 

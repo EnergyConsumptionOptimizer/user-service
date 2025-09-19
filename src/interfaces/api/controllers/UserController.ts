@@ -14,7 +14,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   getHouseholdUsers = async (
-    request: Request,
+    _request: Request,
     response: Response,
   ): Promise<Response> => {
     try {
@@ -51,7 +51,7 @@ export class UserController {
       if (error instanceof UsernameConflictError) {
         return response.status(409).json({ message: error.message });
       }
-      return response.status(400).json();
+      return response.status(500).send();
     }
   };
 
@@ -88,7 +88,7 @@ export class UserController {
         return response.status(404).json({ message: error.message });
       }
 
-      return response.status(400).json();
+      return response.status(500).send();
     }
   };
 
@@ -112,7 +112,7 @@ export class UserController {
         return response.status(401).json({ message: error.message });
       }
 
-      return response.status(400).json();
+      return response.status(500).send();
     }
   };
 
@@ -137,7 +137,7 @@ export class UserController {
         return response.status(404).json({ message: error.message });
       }
 
-      return response.status(400).json();
+      return response.status(500).send();
     }
   };
 
@@ -160,17 +160,16 @@ export class UserController {
         username,
       );
 
-      return response.status(201).json(UserMapper.toDTO(user));
+      return response.json(UserMapper.toDTO(user));
     } catch (error) {
       if (error instanceof UserNotFoundError) {
-        return response.status(404).json({ message: error.message });
+        return response.status(404).json({ error: error.message });
       }
       if (error instanceof UsernameConflictError) {
-        return response.status(409).json({ message: error.message });
+        return response.status(409).json({ error: error.message });
       }
 
-      console.log(error);
-      return response.status(400).json({ e: error });
+      return response.status(500).send();
     }
   };
 }
