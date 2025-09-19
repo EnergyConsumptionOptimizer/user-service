@@ -60,13 +60,13 @@ describe("api/users/", () => {
   });
 
   describe("GET /:id - Retrieve an user", () => {
-    const getAllRequest = async (id: UserID, token?: string) =>
+    const getUserRequest = async (id: UserID, token?: string) =>
       request(app)
         .get(url + "/" + id.value)
         .set("Authorization", setAuth(token));
 
     it("should allow to get a user", async () => {
-      const response = await getAllRequest(
+      const response = await getUserRequest(
         householdUserMark.id,
         adminAccessToken,
       );
@@ -77,9 +77,18 @@ describe("api/users/", () => {
     });
 
     it("should return 401 when no authentication is provided", async () => {
-      const response = await getAllRequest(householdUserMark.id);
+      const response = await getUserRequest(householdUserMark.id);
 
       expect(response.status).toBe(401);
+    });
+
+    it("should return 404 when user's ID does not exist", async () => {
+      const response = await getUserRequest(
+        { value: uuidv4() },
+        adminAccessToken,
+      );
+
+      expect(response.status).toBe(404);
     });
   });
 
@@ -91,13 +100,7 @@ describe("api/users/", () => {
     ) =>
       request(app)
         .patch(url + "/" + id.value + "/password")
-        .send(
-          password
-            ? {
-                password: password,
-              }
-            : {},
-        )
+        .send({ password: password })
         .set("Authorization", setAuth(token));
 
     it("should allow admin to update any household user's password", async () => {

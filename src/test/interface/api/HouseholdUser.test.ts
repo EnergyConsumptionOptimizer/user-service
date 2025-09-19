@@ -105,18 +105,7 @@ describe("api/household-users/", () => {
     const createNewHouseholdUserRequest = async (
       user?: { username: string; password: string },
       token?: string,
-    ) =>
-      request(app)
-        .post(url)
-        .send(
-          user
-            ? {
-                username: user.username,
-                password: user.password,
-              }
-            : {},
-        )
-        .set("Authorization", setAuth(token));
+    ) => request(app).post(url).send(user).set("Authorization", setAuth(token));
 
     it("should create household user when admin provides valid username and password", async () => {
       const newUser = mockHouseholdUserEmma;
@@ -175,13 +164,7 @@ describe("api/household-users/", () => {
     ) =>
       request(app)
         .patch(url + "/" + id.value + "/username")
-        .send(
-          username
-            ? {
-                username: username,
-              }
-            : {},
-        )
+        .send({ username: username })
         .set("Authorization", setAuth(token));
 
     it("should allow admin to update any household user's username", async () => {
@@ -194,7 +177,7 @@ describe("api/household-users/", () => {
         adminAccessToken,
       );
 
-      expect(response.status).toBe(201);
+      expect(response.status).toBe(200);
       expect(response.body["username"]).toBe(newUsername);
     });
 
@@ -206,7 +189,7 @@ describe("api/household-users/", () => {
         markAccessToken,
       );
 
-      expect(response.status).toBe(201);
+      expect(response.status).toBe(200);
       expect(response.body["username"]).toBe(householdUserMark.username);
     });
 
