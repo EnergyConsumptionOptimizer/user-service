@@ -65,7 +65,6 @@ tasks.named("assemble") {
 tasks.register<NpmTask>("npmTest") {
     group = "verification"
     description = "Run unit tests"
-    dependsOn("npmCi")
     args.set(listOf("run", "test"))
     inputs.dir("src")
     inputs.file("package.json")
@@ -79,7 +78,6 @@ tasks.named("check") {
 tasks.register<NpmTask>("startDev") {
     group = "application"
     description = "Start development server"
-    dependsOn("npmCi")
     args.set(listOf("run", "start:dev"))
 }
 
@@ -96,7 +94,7 @@ tasks.register<NpmTask>("lint") {
     description = "Run lint"
     args.set(listOf("run", "lint"))
     inputs.dir("src")
-    inputs.file("eslint.config.mjs")
+    inputs.file("eslint.config.mts")
 }
 
 tasks.register<NpmTask>("lintFix") {
