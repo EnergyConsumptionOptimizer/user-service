@@ -7,7 +7,6 @@
     "start:dev": "ts-node-dev --respawn --transpile-only src/app.ts",
     "test": "npx vitest run",
     "lint": "npx eslint \"src/**/*.{ts,js}\"",
-    "lint:fix": "npx eslint 'src/**/*.{ts,js}' --fix",
     "format": "prettier --write \"src/**/*.{ts,js}\" --ignore-unknown",
     "docs": "npx typedoc --entryPointStrategy expand ./src --plugin typedoc-github-theme",
     "lint-staged": "lint-staged"
@@ -29,7 +28,7 @@
     "reflect-metadata": "^0.2.2",
     "typedoc": "^0.28.12",
     "typescript-eslint": "^8.42.0",
-    "uuid": "^12.0.0",
+    "uuid": "^13.0.0",
     "vitest": "^3.2.4",
     "yamljs": "^0.3.0",
     "zod": "^4.1.8"
