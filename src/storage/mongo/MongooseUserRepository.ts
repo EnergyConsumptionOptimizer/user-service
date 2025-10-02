@@ -63,10 +63,8 @@ export class MongooseUserRepository implements UserRepository {
     const id = uuidv4();
 
     const userDocument = new UserModel({
+      ...user,
       _id: id,
-      username: user.username,
-      password: user.password,
-      role: user.role,
     });
 
     try {
