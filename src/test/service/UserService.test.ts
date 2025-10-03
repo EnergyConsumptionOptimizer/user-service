@@ -41,7 +41,7 @@ describe("UserService", () => {
       );
 
       expect(result.id.value).not.toBe("");
-      expect(result.username, householdUser.username);
+      expect(result.username).toBe(householdUser.username);
       expect(result.role).toBe(UserRole.HOUSEHOLD);
     });
 
@@ -54,7 +54,7 @@ describe("UserService", () => {
       const passwordMatch = await bcrypt.compare(password, result.password);
 
       expect(passwordMatch).toBe(true);
-      expect(result.username, "username");
+      expect(result.username).toBe("username");
     });
   });
 
