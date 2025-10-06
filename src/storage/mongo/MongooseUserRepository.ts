@@ -3,28 +3,27 @@ import { type UserRepository } from "../../domain/ports/UserRepository";
 import { type User } from "../../domain/User";
 import { UserID } from "../../domain/UserID";
 import { UserModel } from "./mongoose/UserSchema";
-import { type UserDocument } from "./mongoose/UserDocument";
 import { UserRole } from "../../domain/UserRole";
 import { MongoError } from "mongodb";
 import {
   UsernameConflictError,
   UserNotFoundError,
 } from "../../domain/errors/errors";
+import { FlattenMaps } from "mongoose";
+import { UserDocument } from "./mongoose/UserDocument";
 
 export class MongooseUserRepository implements UserRepository {
   async findAllHouseholdUsers(): Promise<User[]> {
     const userDocuments = await UserModel.find({ role: UserRole.HOUSEHOLD })
       .lean()
       .exec();
-    return userDocuments.map((userDoc) =>
-      this.mapUserDocumentToDomain(userDoc),
-    );
+    return userDocuments.map(this.mapToUser);
   }
 
   async findUserByUsername(username: string): Promise<User | null> {
     try {
-      const userDocument = await UserModel.findOne({ username }).exec();
-      return userDocument ? this.mapUserDocumentToDomain(userDocument) : null;
+      const userDocument = await UserModel.findOne({ username }).lean().exec();
+      return userDocument ? this.mapToUser(userDocument) : null;
     } catch {
       return null;
     }
@@ -39,7 +38,7 @@ export class MongooseUserRepository implements UserRepository {
       return null;
     }
 
-    return this.mapUserDocumentToDomain(userDocument);
+    return this.mapToUser(userDocument);
   }
 
   async findHouseholdUserById(id: UserID): Promise<User | null> {
@@ -56,19 +55,21 @@ export class MongooseUserRepository implements UserRepository {
       return null;
     }
 
-    return this.mapUserDocumentToDomain(userDocument);
+    return this.mapToUser(userDocument);
   }
 
   async addNewHouseholdUser(user: User): Promise<User> {
     const id = uuidv4();
 
     const userDocument = new UserModel({
-      ...user,
       _id: id,
+      username: user.username,
+      password: user.password,
+      role: user.role,
     });
 
     try {
-      return this.mapUserDocumentToDomain(await userDocument.save());
+      return this.mapToUser(await userDocument.save());
     } catch (error) {
       if ((error as MongoError).code === 11000) {
         throw new UsernameConflictError(user.username);
@@ -90,7 +91,9 @@ export class MongooseUserRepository implements UserRepository {
           password: user.password,
         },
         { new: true, runValidators: true },
-      ).exec();
+      )
+        .lean()
+        .exec();
     } catch (error) {
       if ((error as MongoError).code === 11000) {
         throw new UsernameConflictError(user.username);
@@ -102,7 +105,7 @@ export class MongooseUserRepository implements UserRepository {
       throw new UserNotFoundError();
     }
 
-    return this.mapUserDocumentToDomain(updatedDocument);
+    return this.mapToUser(updatedDocument);
   }
 
   async removeHouseholdUser(id: UserID): Promise<void> {
@@ -118,9 +121,13 @@ export class MongooseUserRepository implements UserRepository {
     }
   }
 
-  private mapUserDocumentToDomain(document: UserDocument): User {
+  private mapToUser(
+    document:
+      | (FlattenMaps<UserDocument> & Required<{ _id: string }>)
+      | UserDocument,
+  ): User {
     return {
-      id: { value: document._id },
+      id: { value: document._id.toString() },
       username: document.username,
       password: document.password,
       role: document.role,
