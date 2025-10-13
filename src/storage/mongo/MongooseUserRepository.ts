@@ -6,6 +6,7 @@ import { UserModel } from "./mongoose/UserSchema";
 import { UserRole } from "../../domain/UserRole";
 import { MongoError } from "mongodb";
 import {
+  InvalidIDError,
   UsernameConflictError,
   UserNotFoundError,
 } from "../../domain/errors/errors";
@@ -124,7 +125,7 @@ export class MongooseUserRepository implements UserRepository {
 
   private validateUserID(value: string) {
     if (!validate(value)) {
-      throw new Error(`Invalid user ID format: ${value}`);
+      throw new InvalidIDError();
     }
   }
 }
