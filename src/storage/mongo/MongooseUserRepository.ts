@@ -21,12 +21,8 @@ export class MongooseUserRepository implements UserRepository {
   }
 
   async findUserByUsername(username: string): Promise<User | null> {
-    try {
-      const userDocument = await UserModel.findOne({ username }).lean().exec();
-      return userDocument ? this.mapToUser(userDocument) : null;
-    } catch {
-      return null;
-    }
+    const userDocument = await UserModel.findOne({ username }).lean().exec();
+    return userDocument ? this.mapToUser(userDocument) : null;
   }
 
   async findUserById(id: UserID): Promise<User | null> {
@@ -34,11 +30,7 @@ export class MongooseUserRepository implements UserRepository {
 
     const userDocument = await UserModel.findById(id.value).lean().exec();
 
-    if (!userDocument) {
-      return null;
-    }
-
-    return this.mapToUser(userDocument);
+    return userDocument ? this.mapToUser(userDocument) : null;
   }
 
   async findHouseholdUserById(id: UserID): Promise<User | null> {
@@ -51,11 +43,7 @@ export class MongooseUserRepository implements UserRepository {
       .lean()
       .exec();
 
-    if (!userDocument) {
-      return null;
-    }
-
-    return this.mapToUser(userDocument);
+    return userDocument ? this.mapToUser(userDocument) : null;
   }
 
   async addNewHouseholdUser(user: User): Promise<User> {
