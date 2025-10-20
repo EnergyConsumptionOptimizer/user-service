@@ -8,6 +8,7 @@ import { userRoutes } from "./userRoutes";
 import { adminRoutes } from "./adminRoutes";
 import { householdUserRoutes } from "./householdUserRoutes";
 import { internalRoutes } from "./internal/internalRoutes";
+import { healthCheck } from "./healthCheck";
 
 export function router(
   authController: AuthController,
@@ -15,6 +16,8 @@ export function router(
   userController: UserController,
 ): Router {
   const router = Router();
+
+  router.get("/health", healthCheck);
 
   router.use("/api/auth", authRoutes(authController, authMiddleware));
 
