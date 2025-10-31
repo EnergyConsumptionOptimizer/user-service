@@ -30,7 +30,10 @@ export function router(
     householdUserRoutes(authMiddleware, userController),
   );
 
-  router.use("/api/internal", internalRoutes(authController, authMiddleware));
+  router.use(
+    "/api/internal",
+    internalRoutes(authController, authMiddleware, userController),
+  );
 
   return router;
 }

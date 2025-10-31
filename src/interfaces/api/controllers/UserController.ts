@@ -46,6 +46,25 @@ export class UserController {
     }
   };
 
+  getUserFromUsername = async (
+    request: Request,
+    response: Response,
+  ): Promise<Response> => {
+    try {
+      const { username } = request.params;
+
+      const user = await this.userService.getUserByUsername(username);
+
+      if (!user) {
+        return response.status(404).json(UserNotFound);
+      }
+
+      return response.json(UserMapper.toDTO(user));
+    } catch {
+      return response.status(500).send();
+    }
+  };
+
   createHouseholdUser = async (
     request: Request,
     response: Response,
