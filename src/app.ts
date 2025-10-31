@@ -1,6 +1,7 @@
 import express from "express";
 import { apiRouter } from "./interfaces/api/dependencies";
 import mongoose from "mongoose";
+import "dotenv/config";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -14,7 +15,7 @@ if (!MONGO_URI) {
 app.use(express.json());
 app.use(apiRouter);
 
-app.listen(PORT, async () => {
+const server = app.listen(PORT, async () => {
   console.log(`Server running on port ${PORT}`);
 
   console.log("Connecting to MongoDB...");
@@ -29,3 +30,14 @@ app.listen(PORT, async () => {
     `Household users API: http://localhost:${PORT}/api/household-users`,
   );
 });
+
+process.on("SIGTERM", shutDown);
+process.on("SIGINT", shutDown);
+
+function shutDown() {
+  console.log("Received kill signal, shutting down gracefully");
+  server.close(() => {
+    console.log("HTTP server closed");
+    process.exit(0);
+  });
+}
