@@ -6,19 +6,17 @@ import { UserServiceImpl } from "../../application/UserServiceImpl";
 import { AuthMiddleware } from "./middleware/AuthMiddleware";
 import { router } from "./routes/router";
 import { MongooseUserRepository } from "../../storage/mongo/MongooseUserRepository";
-import { env } from "../../config";
-
 // ===== Repository =====
 export const userRepository = new MongooseUserRepository();
 
 // ===== Services =====
-export const jwtService = new JWTService(
-  env.JWT_SECRET,
-  env.JWT_EXPIRES_IN,
-  env.JWT_REFRESH_EXPIRES_IN,
-);
+export const jwtService = new JWTService();
+
 export const authService = new AuthServiceImpl(userRepository, jwtService);
-export const userService = new UserServiceImpl(userRepository, env.RESET_CODE);
+export const userService = new UserServiceImpl(
+  userRepository,
+  process.env.RESET_CODE || "1234",
+);
 
 // ===== Controllers =====
 export const authController = new AuthController(authService);
