@@ -21,6 +21,14 @@ export interface UserService {
   getUser(id: UserID): Promise<User | null>;
 
   /**
+   * Retrieves a single user by their unique username.
+   *
+   * @param username - The unique username of the user.
+   * @returns A promise that resolves to the user if found, or `null` otherwise.
+   */
+  getUserByUsername(username: string): Promise<User | null>;
+
+  /**
    * Updates the username of a household user.
    *
    * @param id - The unique identifier of the household user.

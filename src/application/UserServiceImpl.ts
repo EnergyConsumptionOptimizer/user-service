@@ -26,6 +26,10 @@ export class UserServiceImpl implements UserService {
     return this.userRepository.findUserById(id);
   }
 
+  async getUserByUsername(username: string): Promise<User | null> {
+    return this.userRepository.findUserByUsername(username);
+  }
+
   async createHouseholdUser(username: string, password: string): Promise<User> {
     const newHouseholdUser = new UserFactory().createHouseholdUser(
       username.toLowerCase().trim(),
