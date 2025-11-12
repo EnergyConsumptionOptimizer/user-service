@@ -1,5 +1,5 @@
 {
-  "name": "template-for-typescript-projects",
+  "name": "user-service",
   "engines": {
     "node": "24.11"
   },
