@@ -57,7 +57,7 @@
     "ts-node-dev": "^2.0.0",
     "typedoc-github-theme": "^0.3.1",
     "typescript": "^5.9.2",
-    "vitest": "^3.2.4",
+    "vitest": "^4.0.0",
     "tsconfig-paths": "^4.2.0",
     "vite-tsconfig-paths": "^5.1.4",
     "semantic-release-preconfigured-conventional-commits": "^1.1.152"
