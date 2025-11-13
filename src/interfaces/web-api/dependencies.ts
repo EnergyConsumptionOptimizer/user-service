@@ -3,6 +3,7 @@ import { JWTService } from "@application/JWTService";
 import { AuthServiceImpl } from "@application/AuthService";
 import { UserServiceImpl } from "@application/UserServiceImpl";
 import { router } from "./routes/router";
+import { UserController } from "@interfaces/web-api/controllers/UserController";
 
 export const userRepository = new MongooseUserRepository();
 
@@ -15,5 +16,8 @@ export const userService = new UserServiceImpl(
   process.env.RESET_CODE || "1234",
 );
 
+// ===== Controllers =====
+export const userController = new UserController(userService);
+
 // ===== Router =====
-export const apiRouter = router();
+export const apiRouter = router(userController);
