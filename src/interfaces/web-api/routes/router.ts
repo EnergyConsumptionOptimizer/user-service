@@ -20,10 +20,14 @@ export function router(
 
   router.use("/api/auth", authRoutes(authController, authMiddleware));
 
-  router.use("/api/admin", adminRoutes(userController));
+  router.use("/api/users", userRoutes(userController, authMiddleware));
 
-  router.use("/api/users", userRoutes(userController));
+  router.use("/api/admin", adminRoutes(userController, authMiddleware));
 
-  router.use("/api/household-users", householdUserRoutes(userController));
+  router.use(
+    "/api/household-users",
+    householdUserRoutes(userController, authMiddleware),
+  );
+
   return router;
 }
