@@ -4,7 +4,10 @@ import { AuthServiceImpl } from "@application/AuthService";
 import { UserServiceImpl } from "@application/UserServiceImpl";
 import { router } from "./routes/router";
 import { UserController } from "@interfaces/web-api/controllers/UserController";
+import { AuthController } from "@interfaces/web-api/controllers/AuthController";
+import { AuthMiddleware } from "@interfaces/web-api/middleware/AuthMiddleware";
 
+// ===== Repository =====
 export const userRepository = new MongooseUserRepository();
 
 // ===== Services =====
@@ -17,7 +20,11 @@ export const userService = new UserServiceImpl(
 );
 
 // ===== Controllers =====
+export const authController = new AuthController(authService);
 export const userController = new UserController(userService);
 
+// ===== Middleware =====
+export const authMiddleware = new AuthMiddleware(authService);
+
 // ===== Router =====
-export const apiRouter = router(userController);
+export const apiRouter = router(authController, authMiddleware, userController);
