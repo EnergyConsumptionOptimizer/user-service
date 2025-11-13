@@ -16,7 +16,7 @@ import {
   UsernameConflictError,
   UserNotFoundError,
 } from "@domain/errors/errors";
-import { UserService } from "@domain/port/UserService";
+import { UserService } from "@domain/ports/UserService";
 
 describe("UserService", () => {
   let userService: UserService;

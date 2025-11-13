@@ -1,4 +1,4 @@
-import { UserRepository } from "@domain/port/UserRepository";
+import { UserRepository } from "@domain/ports/UserRepository";
 import { User } from "@domain/User";
 import { UserRole } from "@domain/UserRole";
 import { UserID } from "@domain/UserID";

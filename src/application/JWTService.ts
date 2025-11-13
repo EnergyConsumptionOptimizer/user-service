@@ -1,6 +1,6 @@
 import jwt, { SignOptions } from "jsonwebtoken";
 import type { StringValue } from "ms";
-import { TokenService } from "@domain/port/TokenService";
+import { TokenService } from "@domain/ports/TokenService";
 import { AccessTokenPayload } from "@domain/AccessTokenPayload";
 
 export class JWTService implements TokenService {

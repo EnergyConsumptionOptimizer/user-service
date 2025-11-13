@@ -1,5 +1,5 @@
-import { UserService } from "@domain/port/UserService";
-import { UserRepository } from "@domain/port/UserRepository";
+import { UserService } from "@domain/ports/UserService";
+import { UserRepository } from "@domain/ports/UserRepository";
 import { User } from "@domain/User";
 import { UserID } from "@domain/UserID";
 import bcrypt from "bcrypt";

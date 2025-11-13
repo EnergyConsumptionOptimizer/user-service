@@ -6,9 +6,9 @@ import {
 } from "@domain/errors/errors";
 import { AccessTokenPayload } from "@domain/AccessTokenPayload";
 import { compare } from "bcrypt";
-import { AuthService } from "@domain/port/AuthService";
-import { UserRepository } from "@domain/port/UserRepository";
-import { TokenService } from "@domain/port/TokenService";
+import { AuthService } from "@domain/ports/AuthService";
+import { UserRepository } from "@domain/ports/UserRepository";
+import { TokenService } from "@domain/ports/TokenService";
 
 export class AuthServiceImpl implements AuthService {
   constructor(
