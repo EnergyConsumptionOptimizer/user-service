@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { AuthMiddleware } from "../middleware/AuthMiddleware";
-import { AuthController } from "../controllers/AuthController";
+import { AuthController } from "@interfaces/web-api/controllers/AuthController";
+import { AuthMiddleware } from "@interfaces/web-api/middleware/AuthMiddleware";
 
 export function authRoutes(
   authController: AuthController,

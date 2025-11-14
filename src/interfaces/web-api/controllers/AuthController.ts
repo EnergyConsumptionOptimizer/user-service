@@ -1,82 +1,47 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { AuthenticatedRequest } from "../middleware/AuthMiddleware";
 import { AuthService } from "@domain/ports/AuthService";
 import { AccessToken } from "@domain/AccessToken";
-import {
-  InvalidCredentialsError,
-  InvalidRefreshTokenError,
-} from "@domain/errors/errors";
 import { AccessTokenMapper } from "@presentation/AccessTokenMapper";
-import { FieldRequiredError } from "@interfaces/web-api/errors/FieldRequired";
-import { InvalidRequest } from "@interfaces/web-api/errors/InvalidRequest";
+import { LoginSchema, RefreshRequestSchema } from "@presentation/AuthSchemas";
 
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  login = async (request: Request, response: Response): Promise<Response> => {
+  login = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      if (!request.body) return response.status(400).json(InvalidRequest);
-
-      const { username, password } = request.body;
-
-      if (!username) {
-        return response.status(400).json(FieldRequiredError("Username"));
-      }
-
-      if (!password) {
-        return response.status(400).json(FieldRequiredError("Password"));
-      }
-
+      const { username, password } = LoginSchema.parse(req.body);
       const token: AccessToken = await this.authService.login(
         username,
         password,
       );
-
-      return response.status(200).json(AccessTokenMapper.toDTO(token));
+      res.status(200).json(AccessTokenMapper.toDTO(token));
     } catch (error) {
-      if (error instanceof InvalidCredentialsError) {
-        return response.status(401).json({ message: error.message });
-      }
-
-      return response.status(500).send();
+      next(error);
     }
   };
 
-  logout = async (request: Request, response: Response) => {
+  logout = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await this.authService.logout(
-        (request as AuthenticatedRequest).user.username,
-      );
-
-      return response.status(200).send();
-    } catch {
-      return response.status(500).send();
+      const user = (req as AuthenticatedRequest).user;
+      await this.authService.logout(user.username);
+      res.status(200).json({ message: "Logged out successfully" });
+    } catch (error) {
+      next(error);
     }
   };
 
-  refresh = async (request: Request, response: Response): Promise<Response> => {
+  refresh = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      if (!request.body) return response.status(400).json(InvalidRequest);
-
-      const { refreshToken } = request.body;
-
-      if (!refreshToken) {
-        return response.status(400).json(FieldRequiredError("Refresh token"));
-      }
-
+      const { refreshToken } = RefreshRequestSchema.parse(req.body);
       const token = await this.authService.refresh(refreshToken);
-
-      return response.status(200).json(AccessTokenMapper.toDTO(token));
+      res.status(200).json(AccessTokenMapper.toDTO(token));
     } catch (error) {
-      if (error instanceof InvalidRefreshTokenError) {
-        return response.status(401).json({ message: "Invalid refresh token" });
-      }
-
-      return response.status(500).send();
+      next(error);
     }
   };
 
-  verify = async (_request: Request, response: Response): Promise<Response> => {
-    return response.status(204).send();
+  verify = async (_req: Request, res: Response) => {
+    res.status(204).send();
   };
 }
