@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { ZodError } from "zod";
 import {
   UsernameConflictError,
@@ -12,7 +12,12 @@ import {
   ForbiddenError,
 } from "@domain/errors/errors";
 
-export const errorsHandler = (error: unknown, _req: Request, res: Response) => {
+export const errorsHandler = (
+  error: unknown,
+  _req: Request,
+  res: Response,
+  _next: NextFunction, // <-- Add this parameter
+) => {
   if (error instanceof ZodError) {
     return res.status(400).json({
       error: "ValidationError",
