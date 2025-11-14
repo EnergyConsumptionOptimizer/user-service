@@ -10,19 +10,18 @@ export function householdUserRoutes(
 ): Router {
   const router = Router();
 
-  router.get(
-    "/",
-    authMiddleware.authenticate,
-    authMiddleware.requireRole(UserRole.ADMIN),
-    userController.getHouseholdUsers,
-  );
-
-  router.post(
-    "/",
-    authMiddleware.authenticate,
-    authMiddleware.requireRole(UserRole.ADMIN),
-    userController.createHouseholdUser,
-  );
+  router
+    .route("/")
+    .get(
+      authMiddleware.authenticate,
+      authMiddleware.requireRole(UserRole.ADMIN),
+      userController.getHouseholdUsers,
+    )
+    .post(
+      authMiddleware.authenticate,
+      authMiddleware.requireRole(UserRole.ADMIN),
+      userController.createHouseholdUser,
+    );
 
   router.patch(
     "/:id/username",
