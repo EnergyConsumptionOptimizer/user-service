@@ -27,7 +27,6 @@ const connectDatabase = async () => {
 const launchServer = () => {
   app.listen(config.port, () => {
     console.log(`Server running on port ${config.port}`);
-    console.log(`API endpoint: http://localhost:${config.port}/api/thresholds`);
   });
 };
 
