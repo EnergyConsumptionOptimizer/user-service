@@ -42,7 +42,6 @@ as well as handling user authentication and authorization.
 - `PATCH /api/household-users/:id/username`
 - `DELETE /api/household-users/:id`
 
-
 ## Documentation
 Documentation of the typescript code base can be found at the [typedoc](https://energyconsumptionoptimizer.github.io/user-service).
 
