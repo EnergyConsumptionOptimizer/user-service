@@ -39,3 +39,24 @@ export class InvalidResetCodeError extends Error {
     this.name = "InvalidResetCodeError";
   }
 }
+
+export class AuthRequiredError extends Error {
+  constructor() {
+    super("Authentication required");
+    this.name = "AuthRequiredError";
+  }
+}
+
+export class ForbiddenError extends Error {
+  constructor() {
+    super("Forbidden: Insufficient permissions");
+    this.name = "ForbiddenError";
+  }
+}
+
+export class InvalidAccessTokenError extends Error {
+  constructor() {
+    super("Invalid or expired access token");
+    this.name = "InvalidAccessTokenError";
+  }
+}
