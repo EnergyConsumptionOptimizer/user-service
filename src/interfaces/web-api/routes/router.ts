@@ -8,6 +8,7 @@ import { userRoutes } from "@interfaces/web-api/routes/userRoutes";
 import { authRoutes } from "@interfaces/web-api/routes/authRoutes";
 import { AuthController } from "@interfaces/web-api/controllers/AuthController";
 import { AuthMiddleware } from "@interfaces/web-api/middleware/AuthMiddleware";
+import { internalRoutes } from "@interfaces/web-api/routes/internal/internalRoutes";
 
 export function router(
   authController: AuthController,
@@ -27,6 +28,11 @@ export function router(
   router.use(
     "/api/household-users",
     householdUserRoutes(userController, authMiddleware),
+  );
+
+  router.use(
+    "/api/internal",
+    internalRoutes(authController, authMiddleware, userController),
   );
 
   return router;
