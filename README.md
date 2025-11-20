@@ -21,16 +21,20 @@ as well as handling user authentication and authorization.
 [![Semantic Versioning](https://img.shields.io/badge/Semantic_Versioning-333333?style=for-the-badge&logo=semver&logoColor=white)](https://semver.org/)
 [![Conventional Commits](https://img.shields.io/badge/Conventional_Commits-FE5196?style=for-the-badge&logo=conventionalcommits&logoColor=white)](https://www.conventionalcommits.org/en/v1.0.0/)
 [![Renovate](https://img.shields.io/badge/Renovate-1A1F6C?style=for-the-badge&logo=renovate&logoColor=white)](https://renovatebot.com/)
+[![SonarCloud](https://img.shields.io/badge/SonarCloud-F3702A?style=for-the-badge&logo=sonarcloud&logoColor=white)](https://sonarcloud.io/)
 
 ## REST API Endpoints
 ### Auth
 - `POST /api/auth/login`
 - `POST /api/auth/logout`
 - `POST /api/auth/refresh`
+- `GET /api/internal/auth/verify`
+- `GET /api/internal/auth/verify-admin`
 
 ### Users
 - `GET /api/users/:id`
 - `PATCH /api/users/:id/password`
+- `GET /api/internal/users/:username`
 
 ### Admin
 - `POST /api/admin/reset-password`
@@ -40,6 +44,8 @@ as well as handling user authentication and authorization.
 - `POST /api/household-users`
 - `PATCH /api/household-users/:id/username`
 - `DELETE /api/household-users/:id`
+
+### Internal
 
 
 ## Documentation
