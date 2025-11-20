@@ -9,7 +9,6 @@ import {
   UsernameConflictError,
   UserNotFoundError,
 } from "@domain/errors/errors";
-import { FlattenMaps } from "mongoose";
 import { UserDocument } from "./mongoose/UserDocument";
 import { UserRepository } from "@domain/ports/UserRepository";
 
@@ -111,9 +110,7 @@ export class MongooseUserRepository implements UserRepository {
   }
 
   private mapToUser(
-    document:
-      | (FlattenMaps<UserDocument> & Required<{ _id: string }>)
-      | UserDocument,
+    document: Pick<UserDocument, "_id" | "username" | "password" | "role">,
   ): User {
     return {
       id: { value: document._id.toString() },
