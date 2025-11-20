@@ -8,6 +8,7 @@ import {
   ResetAdminPasswordSchema,
   CreateUserSchema,
   UpdateUsernameSchema,
+  UsernameSchema,
 } from "@presentation/UserSchemas";
 
 export class UserController {
@@ -35,6 +36,24 @@ export class UserController {
 
       if (!user) return next(new UserNotFoundError());
       res.status(200).json(UserMapper.toDTO(user));
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getUserFromUsername = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const username = UsernameSchema.parse(req.params.username);
+
+      const user = await this.userService.getUserByUsername(username);
+
+      if (!user) return next(new UserNotFoundError());
+
+      return res.json(UserMapper.toDTO(user));
     } catch (error) {
       next(error);
     }
