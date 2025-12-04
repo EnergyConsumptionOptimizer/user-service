@@ -16,7 +16,7 @@ export const errorsHandler = (
   error: unknown,
   _req: Request,
   res: Response,
-  _next: NextFunction, // <-- Add this parameter
+  _next: NextFunction,
 ) => {
   if (error instanceof ZodError) {
     return res.status(400).json({
