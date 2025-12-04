@@ -14,5 +14,6 @@ export function authRoutes(
 
   router.post("/refresh", authController.refresh);
 
+  router.get("/verify", authMiddleware.authenticate, authController.verify);
   return router;
 }

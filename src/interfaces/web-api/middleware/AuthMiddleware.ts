@@ -17,11 +17,10 @@ export class AuthMiddleware {
 
   authenticate = async (req: Request, _res: Response, next: NextFunction) => {
     try {
-      const rawAuthHeader = req.headers.authorization;
-      if (!rawAuthHeader || !rawAuthHeader.startsWith("Bearer ")) {
+      const token = req.cookies["authToken"];
+      if (!token) {
         return next(new AuthRequiredError());
       }
-      const token = rawAuthHeader.split(" ")[1];
       const user = await this.authService.verify(token);
       if (!user) return next(new InvalidAccessTokenError());
       (req as AuthenticatedRequest).user = user;
