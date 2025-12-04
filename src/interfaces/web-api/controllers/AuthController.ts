@@ -1,9 +1,15 @@
 import { Request, Response, NextFunction } from "express";
 import { AuthenticatedRequest } from "../middleware/AuthMiddleware";
 import { AuthService } from "@domain/ports/AuthService";
-import { AccessToken } from "@domain/AccessToken";
-import { AccessTokenMapper } from "@presentation/AccessTokenMapper";
-import { LoginSchema, RefreshRequestSchema } from "@presentation/AuthSchemas";
+import { LoginSchema } from "@presentation/AuthSchemas";
+
+const COOKIE_OPTIONS = {
+  httpOnly: true,
+  secure: false,
+  sameSite: "lax" as const,
+};
+const ACCESS_TOKEN_MAX_AGE = 60 * 60 * 1000; // 1h
+const REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7d
 
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -11,11 +17,22 @@ export class AuthController {
   login = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { username, password } = LoginSchema.parse(req.body);
-      const token: AccessToken = await this.authService.login(
-        username,
-        password,
-      );
-      res.status(200).json(AccessTokenMapper.toDTO(token));
+      const tokens = await this.authService.login(username, password);
+      res.cookie("authToken", tokens.accessToken, {
+        ...COOKIE_OPTIONS,
+        maxAge: ACCESS_TOKEN_MAX_AGE,
+      });
+
+      res.cookie("refreshToken", tokens.refreshToken, {
+        ...COOKIE_OPTIONS,
+        maxAge: REFRESH_TOKEN_MAX_AGE,
+      });
+
+      res.status(200).json({
+        success: true,
+        message: "Login successful.",
+        user: { username },
+      });
     } catch (error) {
       next(error);
     }
@@ -25,6 +42,8 @@ export class AuthController {
     try {
       const user = (req as AuthenticatedRequest).user;
       await this.authService.logout(user.username);
+      res.clearCookie("authToken", COOKIE_OPTIONS);
+      res.clearCookie("refreshToken", COOKIE_OPTIONS);
       res.status(200).json({ message: "Logged out successfully" });
     } catch (error) {
       next(error);
@@ -33,15 +52,37 @@ export class AuthController {
 
   refresh = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { refreshToken } = RefreshRequestSchema.parse(req.body);
-      const token = await this.authService.refresh(refreshToken);
-      res.status(200).json(AccessTokenMapper.toDTO(token));
+      const currentRefreshToken = req.cookies["refreshToken"] as string;
+      const newTokens = await this.authService.refresh(currentRefreshToken);
+
+      res.cookie("authToken", newTokens.accessToken, {
+        ...COOKIE_OPTIONS,
+        maxAge: ACCESS_TOKEN_MAX_AGE,
+      });
+
+      res.cookie("refreshToken", newTokens.refreshToken, {
+        ...COOKIE_OPTIONS,
+        maxAge: REFRESH_TOKEN_MAX_AGE,
+      });
+
+      res.status(200).json({
+        success: true,
+        message: "Login successful.",
+      });
     } catch (error) {
       next(error);
     }
   };
 
-  verify = async (_req: Request, res: Response) => {
-    res.status(204).send();
+  verify = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user = (req as AuthenticatedRequest).user;
+      res.status(200).json({
+        success: true,
+        user: user,
+      });
+    } catch (error) {
+      next(error);
+    }
   };
 }
