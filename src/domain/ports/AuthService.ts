@@ -1,5 +1,6 @@
 import { AccessToken } from "../AccessToken";
 import { AccessTokenPayload } from "../AccessTokenPayload";
+import { RefreshResponse } from "@domain/ports/RefreshResponse";
 
 /**
  * Service interface for handling authentication and authorization.
@@ -37,5 +38,5 @@ export interface AuthService {
    * @param token - The refresh or access token to exchange.
    * @returns A promise that resolves to a new access token.
    */
-  refresh(token: string): Promise<AccessToken>;
+  refresh(token: string): Promise<RefreshResponse>;
 }

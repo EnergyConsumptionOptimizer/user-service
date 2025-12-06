@@ -9,6 +9,7 @@ import { compare } from "bcrypt";
 import { AuthService } from "@domain/ports/AuthService";
 import { UserRepository } from "@domain/ports/UserRepository";
 import { TokenService } from "@domain/ports/TokenService";
+import { RefreshResponse } from "@domain/ports/RefreshResponse";
 
 export class AuthServiceImpl implements AuthService {
   constructor(
@@ -53,7 +54,7 @@ export class AuthServiceImpl implements AuthService {
     }
   }
 
-  async refresh(token: string): Promise<AccessToken> {
+  async refresh(token: string): Promise<RefreshResponse> {
     const payload = await this.tokenService.verifyToken(token);
 
     if (!payload) {
@@ -71,7 +72,10 @@ export class AuthServiceImpl implements AuthService {
     const refreshToken =
       await this.tokenService.generateRefreshToken(userPayload);
 
-    return { accessToken: accessToken, refreshToken: refreshToken };
+    return {
+      tokens: { accessToken, refreshToken },
+      user: userPayload,
+    };
   }
 
   async verify(token: string): Promise<AccessTokenPayload | undefined> {
