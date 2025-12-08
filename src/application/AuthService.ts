@@ -1,4 +1,3 @@
-import { AccessToken } from "@domain/AccessToken";
 import {
   InvalidCredentialsError,
   InvalidRefreshTokenError,
@@ -17,7 +16,7 @@ export class AuthServiceImpl implements AuthService {
     private readonly tokenService: TokenService,
   ) {}
 
-  async login(username: string, password: string): Promise<AccessToken> {
+  async login(username: string, password: string): Promise<RefreshResponse> {
     const user = await this.userRepository.findUserByUsername(
       username.toLowerCase(),
     );
@@ -43,7 +42,10 @@ export class AuthServiceImpl implements AuthService {
     const refreshToken =
       await this.tokenService.generateRefreshToken(userPayload);
 
-    return { accessToken: accessToken, refreshToken: refreshToken };
+    return {
+      tokens: { accessToken, refreshToken },
+      user: userPayload,
+    };
   }
 
   async logout(username: string): Promise<void> {
