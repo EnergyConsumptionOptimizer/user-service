@@ -17,7 +17,8 @@ export class AuthController {
   login = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { username, password } = LoginSchema.parse(req.body);
-      const tokens = await this.authService.login(username, password);
+      const { tokens, user } = await this.authService.login(username, password);
+
       res.cookie("authToken", tokens.accessToken, {
         ...COOKIE_OPTIONS,
         maxAge: ACCESS_TOKEN_MAX_AGE,
@@ -31,7 +32,7 @@ export class AuthController {
       res.status(200).json({
         success: true,
         message: "Login successful.",
-        user: { username },
+        user: user,
       });
     } catch (error) {
       next(error);

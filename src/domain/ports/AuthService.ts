@@ -1,4 +1,3 @@
-import { AccessToken } from "../AccessToken";
 import { AccessTokenPayload } from "../AccessTokenPayload";
 import { RefreshResponse } from "@domain/ports/RefreshResponse";
 
@@ -13,7 +12,7 @@ export interface AuthService {
    * @param password - The password of the user.
    * @returns A promise that resolves to a new access token if authentication succeeds.
    */
-  login(username: string, password: string): Promise<AccessToken>;
+  login(username: string, password: string): Promise<RefreshResponse>;
 
   /**
    * Logs a user out of the system
