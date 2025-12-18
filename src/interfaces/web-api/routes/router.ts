@@ -23,7 +23,7 @@ export function router(
 
   router.use("/api/users", userRoutes(userController, authMiddleware));
 
-  router.use("/api/admin", adminRoutes(userController, authMiddleware));
+  router.use("/api/admin", adminRoutes(userController));
 
   router.use(
     "/api/household-users",
