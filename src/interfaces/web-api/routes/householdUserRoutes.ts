@@ -12,7 +12,7 @@ export function householdUserRoutes(
 
   router
     .route("/")
-    .get(userController.getHouseholdUsers)
+    .get(authMiddleware.authenticate, userController.getHouseholdUsers)
     .post(
       authMiddleware.authenticate,
       authMiddleware.requireRole(UserRole.ADMIN),
