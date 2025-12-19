@@ -44,6 +44,9 @@ describe("Auth API Integration", () => {
 
   describe("POST /refresh", () => {
     it("issues new pair of tokens when providing ONLY a valid refresh token", async () => {
+      // Wait > 1s to ensure JWT 'iat' timestamp changes (JWTs have 1s precision)
+      await new Promise((resolve) => setTimeout(resolve, 1010));
+
       const onlyRefreshCookie = `refreshToken=${adminFixture.refreshToken}`;
 
       const res = await request(app)
