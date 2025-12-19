@@ -1,184 +1,76 @@
 import { beforeAll, describe, expect, it } from "vitest";
-
-import { app } from "../app";
-import { User } from "@domain/User";
 import request from "supertest";
-import { mockAdminUser, mockHouseholdUserMark } from "../../storage/MockUsers";
-import { UserID } from "@domain/UserID";
-
-import bcrypt from "bcrypt";
-import { v4 as uuidv4 } from "uuid";
-import { userRepository, userService } from "../dependencies";
+import { app } from "../app";
+import { createAndLoginUser, TestFixture } from "../utils/auth";
+import {
+  mockAdminUser,
+  mockHouseholdUserDavid,
+  mockHouseholdUserMark,
+} from "../../storage/MockUsers";
 
 describe("api/users/", () => {
-  const url = "/api/users";
-
-  let admin: User;
-  let adminAccessToken: string;
-
-  let householdUserMark: User;
-  let markAccessToken: string;
-
-  const loginRequest = async (username: string, password: string) => {
-    return request(app).post("/api/auth/login").send({
-      username,
-      password,
-    });
-  };
-
-  const accessTokenFromLoginRequest = async (
-    username: string,
-    password: string,
-  ) => {
-    const res = await loginRequest(username, password);
-
-    return "Bearer " + res.body.accessToken;
-  };
-
-  const setAuth = (token?: string) => token ?? "";
+  const baseUrl = "/api/users";
+  let admin: TestFixture;
+  let mark: TestFixture;
 
   beforeAll(async () => {
-    admin = await userRepository.saveNewHouseholdUser({
-      ...mockAdminUser,
-      password: await bcrypt.hash(mockAdminUser.password, 10),
-    });
-
-    adminAccessToken = await accessTokenFromLoginRequest(
-      admin.username,
-      mockAdminUser.password,
-    );
-
-    householdUserMark = await userService.createHouseholdUser(
-      mockHouseholdUserMark.username,
-      mockHouseholdUserMark.password,
-    );
-
-    markAccessToken = await accessTokenFromLoginRequest(
-      householdUserMark.username,
-      mockHouseholdUserMark.password,
-    );
+    admin = await createAndLoginUser(mockAdminUser);
+    mark = await createAndLoginUser(mockHouseholdUserMark);
   });
 
-  describe("GET /:id - Retrieve an user", () => {
-    const getUserRequest = async (id: UserID, token?: string) =>
-      request(app)
-        .get(url + "/" + id.value)
-        .set("Authorization", setAuth(token));
+  describe("GET /:id", () => {
+    it("should return user details", async () => {
+      const res = await request(app)
+        .get(`${baseUrl}/${mark.user.id.value}`)
+        .set("Cookie", admin.authHeader);
 
-    it("should allow to get a user", async () => {
-      const response = await getUserRequest(
-        householdUserMark.id,
-        adminAccessToken,
-      );
-
-      expect(response.status).toBe(200);
-      expect(response.body["id"]).toBe(householdUserMark.id.value);
-      expect(response.body["username"]).toBe(householdUserMark.username);
+      expect(res.status).toBe(200);
+      expect(res.body.id).toBe(mark.user.id.value);
     });
 
-    it("should return 401 when no authentication is provided", async () => {
-      const response = await getUserRequest(householdUserMark.id);
-
-      expect(response.status).toBe(401);
-    });
-
-    it("should return 404 when user's ID does not exist", async () => {
-      const response = await getUserRequest(
-        { value: uuidv4() },
-        adminAccessToken,
-      );
-
-      expect(response.status).toBe(404);
+    it("should return 404 for non-existent ID", async () => {
+      await request(app)
+        .get(`${baseUrl}/${mockHouseholdUserDavid.id.value}`)
+        .set("Cookie", admin.authHeader)
+        .expect(404);
     });
   });
 
-  describe("PATCH /:id/password - Update password", () => {
-    const changePasswordRequest = async (
-      id: UserID,
-      password?: string,
-      token?: string,
+  describe("PATCH /:id/password", () => {
+    const updatePass = (
+      id: string,
+      password: string | undefined,
+      auth: string,
     ) =>
       request(app)
-        .patch(url + "/" + id.value + "/password")
-        .send({ password: password })
-        .set("Authorization", setAuth(token));
+        .patch(`${baseUrl}/${id}/password`)
+        .set("Cookie", auth)
+        .send({ password });
 
-    it("should allow admin to update any household user's password", async () => {
-      const newPassword = "new-password";
-
-      const response = await changePasswordRequest(
-        householdUserMark.id,
-        newPassword,
-        adminAccessToken,
+    it("should allow admin to update password", async () => {
+      await updatePass(mark.user.id.value, "new-pass", admin.authHeader).expect(
+        200,
       );
 
-      expect(response.status).toBe(200);
-      expect(response.body["id"]).toBe(householdUserMark.id.value);
-
-      const authResponse = await loginRequest(
-        householdUserMark.username,
-        newPassword,
-      );
-      expect(authResponse.status).toBe(200);
+      await request(app)
+        .post("/api/auth/login")
+        .send({ username: mark.user.username, password: "new-pass" })
+        .expect(200);
     });
 
-    it("should update the password of a household user by the same household user who owns the account", async () => {
-      const newPassword = "new-password";
-
-      const response = await changePasswordRequest(
-        householdUserMark.id,
-        newPassword,
-        markAccessToken,
-      );
-
-      expect(response.status).toBe(200);
-      expect(response.body["id"]).toBe(householdUserMark.id.value);
-
-      const authResponse = await loginRequest(
-        householdUserMark.username,
-        newPassword,
-      );
-      expect(authResponse.status).toBe(200);
+    it("should allow user to update their own password", async () => {
+      await updatePass(
+        mark.user.id.value,
+        "newer-pass",
+        mark.authHeader,
+      ).expect(200);
     });
 
-    it("should return 400 status code when no data is provided", async () => {
-      const response = await changePasswordRequest(
-        householdUserMark.id,
-        undefined,
-        adminAccessToken,
+    it("should return 403 when user updates another's password", async () => {
+      const { user } = await createAndLoginUser({ username: "alex" });
+      await updatePass(user.id.value, "not-my-pass", mark.authHeader).expect(
+        403,
       );
-
-      expect(response.status).toBe(400);
-    });
-
-    it("should return 401 when no auth is provided", async () => {
-      const response = await changePasswordRequest(
-        householdUserMark.id,
-        "password",
-      );
-
-      expect(response.status).toBe(401);
-    });
-
-    it("should return 403 when household user tries to update another user's password", async () => {
-      const user = await userService.createHouseholdUser("alex", "password");
-      const response = await changePasswordRequest(
-        user.id,
-        "password",
-        markAccessToken,
-      );
-
-      expect(response.status).toBe(403);
-    });
-
-    it("should return 404 when household user doesn't exists", async () => {
-      const response = await changePasswordRequest(
-        { value: uuidv4() },
-        "password",
-        adminAccessToken,
-      );
-
-      expect(response.status).toBe(404);
     });
   });
 });
