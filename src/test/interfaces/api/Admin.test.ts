@@ -12,7 +12,7 @@ describe("Admin API", () => {
 
   const resetPassword = (resetCode: string, password: string) =>
     request(app)
-      .post(`/api/admin/reset-password`)
+      .post("/api/admin/reset-password")
       .send({ resetCode, password });
 
   const login = (username: string, password: string) =>

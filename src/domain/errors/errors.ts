@@ -1,6 +1,11 @@
 export class UsernameConflictError extends Error {
   constructor(username: string) {
-    super(`Username ${username} already exists`);
+    const message =
+      username.trim().toLowerCase() === "admin"
+        ? "Username 'admin' cannot be used"
+        : "Username already exists";
+
+    super(message);
     this.name = "UsernameConflictError";
   }
 }
