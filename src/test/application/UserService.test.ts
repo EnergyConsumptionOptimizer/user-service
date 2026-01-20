@@ -17,6 +17,7 @@ import {
   UserNotFoundError,
 } from "@domain/errors/errors";
 import { UserService } from "@domain/ports/UserService";
+import { monitoringService } from "../interfaces/dependencies";
 
 describe("UserService", () => {
   let userService: UserService;
@@ -26,7 +27,11 @@ describe("UserService", () => {
 
   beforeAll(() => {
     repository = new InMemoryUserRepository();
-    userService = new UserServiceImpl(repository, RESET_CODE);
+    userService = new UserServiceImpl(
+      repository,
+      monitoringService,
+      RESET_CODE,
+    );
   });
 
   describe("createHouseholdUser", () => {

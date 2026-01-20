@@ -6,6 +6,8 @@ import { AuthController } from "@interfaces/web-api/controllers/AuthController";
 import { UserController } from "@interfaces/web-api/controllers/UserController";
 import { AuthMiddleware } from "@interfaces/web-api/middleware/AuthMiddleware";
 import { router } from "@interfaces/web-api/routes/router";
+import { MonitoringServiceImpl } from "@interfaces/MonitoringServiceImpl";
+import { vi } from "vitest";
 
 export const RESET_CODE = "secret_reset_code";
 
@@ -14,8 +16,17 @@ export const userRepository = new InMemoryUserRepository();
 
 // ===== Services =====
 export const jwtService = new JWTService();
+export const monitoringService = new MonitoringServiceImpl();
+monitoringService.removeHouseholdUserFromMeasurements = vi
+  .fn()
+  .mockResolvedValue(undefined);
+
 export const authService = new AuthServiceImpl(userRepository, jwtService);
-export const userService = new UserServiceImpl(userRepository, RESET_CODE);
+export const userService = new UserServiceImpl(
+  userRepository,
+  monitoringService,
+  RESET_CODE,
+);
 
 // ===== Controllers =====
 export const authController = new AuthController(authService);
