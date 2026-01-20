@@ -6,6 +6,7 @@ import { router } from "./routes/router";
 import { UserController } from "@interfaces/web-api/controllers/UserController";
 import { AuthController } from "@interfaces/web-api/controllers/AuthController";
 import { AuthMiddleware } from "@interfaces/web-api/middleware/AuthMiddleware";
+import { MonitoringServiceImpl } from "@interfaces/MonitoringServiceImpl";
 
 // ===== Repository =====
 export const userRepository = new MongooseUserRepository();
@@ -13,9 +14,11 @@ export const userRepository = new MongooseUserRepository();
 // ===== Services =====
 export const jwtService = new JWTService();
 
+export const monitoringServiceImpl = new MonitoringServiceImpl();
 export const authService = new AuthServiceImpl(userRepository, jwtService);
 export const userService = new UserServiceImpl(
   userRepository,
+  monitoringServiceImpl,
   process.env.RESET_CODE || "1234",
 );
 

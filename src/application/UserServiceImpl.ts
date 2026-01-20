@@ -8,12 +8,14 @@ import {
   InvalidResetCodeError,
   UserNotFoundError,
 } from "@domain/errors/errors";
+import { MonitoringService } from "@application/port/MonitoringService";
 
 export class UserServiceImpl implements UserService {
   private readonly SALT_ROUNDS = 10;
 
   constructor(
     private readonly userRepository: UserRepository,
+    private readonly monitoringService: MonitoringService,
     private readonly RESET_CODE: string,
   ) {}
 
@@ -45,10 +47,16 @@ export class UserServiceImpl implements UserService {
       throw new UserNotFoundError();
     }
 
+    const currentUsername = existingUser.username;
+
     const updatedUser: User = {
       ...existingUser,
       username: username.trim(),
     };
+
+    await this.monitoringService.removeHouseholdUserFromMeasurements(
+      currentUsername,
+    );
 
     return this.userRepository.updateUser(updatedUser);
   }
@@ -71,7 +79,18 @@ export class UserServiceImpl implements UserService {
   }
 
   async deleteHouseholdUser(id: UserID): Promise<void> {
-    return this.userRepository.removeHouseholdUser(id);
+    const user = await this.userRepository.findUserById(id);
+
+    if (!user) {
+      throw new UserNotFoundError();
+    }
+    const currentUsername = user.username;
+
+    await this.userRepository.removeHouseholdUser(id);
+
+    await this.monitoringService.removeHouseholdUserFromMeasurements(
+      currentUsername,
+    );
   }
 
   async resetAdminPassword(resetCode: string, password: string): Promise<User> {
