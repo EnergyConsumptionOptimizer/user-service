@@ -24,20 +24,16 @@ as well as handling user authentication and authorization.
 [![SonarCloud](https://img.shields.io/badge/SonarCloud-F3702A?style=for-the-badge&logo=sonarcloud&logoColor=white)](https://sonarcloud.io/)
 
 ## REST API Endpoints
-### Auth
+### Authentication
 - `POST /api/auth/login`
 - `POST /api/auth/logout`
 - `POST /api/auth/refresh`
-- `GET /api/internal/auth/verify`
-- `GET /api/internal/auth/verify-admin`
+- `GET /api/auth/verify`
 
 ### Users
 - `GET /api/users/:id`
 - `PATCH /api/users/:id/password`
 - `GET /api/internal/users/:username`
-
-### Admin
-- `POST /api/admin/reset-password`
 
 ### Household Users
 - `GET /api/household-users`
@@ -45,8 +41,15 @@ as well as handling user authentication and authorization.
 - `PATCH /api/household-users/:id/username`
 - `DELETE /api/household-users/:id`
 
-### Internal
+### Admin
+- `POST /api/admin/reset-password`
 
+### Internal - Authentication
+- `GET /api/internal/auth/verify`
+- `GET /api/internal/auth/verify-admin`
+
+Internal - Users
+- `GET /api/internal/users/:username`
 
 ## Documentation
 Documentation of the typescript code base can be found at the [typedoc](https://energyconsumptionoptimizer.github.io/user-service).
