@@ -33,7 +33,6 @@ as well as handling user authentication and authorization.
 ### Users
 - `GET /api/users/:id`
 - `PATCH /api/users/:id/password`
-- `GET /api/internal/users/:username`
 
 ### Household Users
 - `GET /api/household-users`
