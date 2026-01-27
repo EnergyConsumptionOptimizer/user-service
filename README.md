@@ -48,7 +48,7 @@ as well as handling user authentication and authorization.
 - `GET /api/internal/auth/verify`
 - `GET /api/internal/auth/verify-admin`
 
-Internal - Users
+### Internal - Users
 - `GET /api/internal/users/:username`
 
 ## Documentation
