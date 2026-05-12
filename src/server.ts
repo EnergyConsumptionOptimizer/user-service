@@ -3,11 +3,12 @@ import "dotenv/config";
 import type { Server } from "node:http";
 import { composeApp } from "@bootstrap/composeApp";
 import { config } from "@bootstrap/config";
+import { startInstrumentation } from "@root/instrumentation";
+import { createLogger } from "@root/logger";
 import mongoose from "mongoose";
-import { startInstrumentation } from "./instrumentation.js";
-import { createLogger } from "./logger.js";
 
-const logger = createLogger(config);
+const rootLogger = createLogger(config);
+const logger = rootLogger.child({ component: "Server" });
 const sdk = startInstrumentation();
 
 function connectMongo(): Promise<void> {
@@ -17,33 +18,27 @@ function connectMongo(): Promise<void> {
 			connectTimeoutMS: 10000,
 		})
 		.then(() => {
-			logger.info({ uri: config.mongo.uri }, "[Server] connected to MongoDB");
+			logger.info("connected to MongoDB");
 		})
 		.catch((err) => {
-			logger.fatal(
-				{ error: err instanceof Error ? err.message : String(err) },
-				"[Server] failed to connect to MongoDB",
-			);
+			logger.fatal({ err }, "failed to connect to MongoDB");
 			process.exit(1);
 		});
 }
 mongoose.connection.on("error", (err) => {
-	logger.error({ error: err }, "[Server] MongoDB runtime connection error");
+	logger.error({ err }, "MongoDB runtime connection error");
 });
 
 function setupGracefulShutdown(server: Server): void {
 	const shutdown = async () => {
-		logger.info("[Server] graceful shutdown initiated");
+		logger.info("graceful shutdown initiated");
 		server.close();
 		await mongoose.disconnect();
 		try {
 			await sdk.shutdown();
-			logger.info("[Server] OpenTelemetry SDK shut down");
+			logger.info("OpenTelemetry SDK shut down");
 		} catch (err) {
-			logger.error(
-				{ error: err instanceof Error ? err.message : String(err) },
-				"[Server] error shutting down OpenTelemetry SDK",
-			);
+			logger.error({ err }, "error shutting down OpenTelemetry SDK");
 		}
 		process.exit(0);
 	};
@@ -54,9 +49,9 @@ function setupGracefulShutdown(server: Server): void {
 
 async function start(): Promise<void> {
 	await connectMongo();
-	const { app } = await composeApp(logger);
+	const { app } = await composeApp(rootLogger);
 	const server = app.listen(config.port, () => {
-		logger.info(`[Server] running on port ${config.port}`);
+		logger.info({ port: config.port }, "listening");
 	});
 	setupGracefulShutdown(server);
 }

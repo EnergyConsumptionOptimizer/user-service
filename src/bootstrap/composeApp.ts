@@ -45,11 +45,16 @@ function createInfrastructureAdapters(
 			config.jwt.secret,
 			config.jwt.expiresIn,
 			config.jwt.refreshExpiresIn,
+			logger.child({ component: "JwtTokenService" }),
 		),
-		passwordHasher: new BcryptPasswordHasher(),
+		passwordHasher: new BcryptPasswordHasher(
+			logger.child({ component: "BcryptPasswordHasher" }),
+		),
 		idGenerator: new NodeCryptoIdGenerator(),
-		uow: new MongoUnitOfWork(),
-		eventPublisher: new MongoOutboxEventPublisher(),
+		uow: new MongoUnitOfWork(logger.child({ component: "MongoUnitOfWork" })),
+		eventPublisher: new MongoOutboxEventPublisher(
+			logger.child({ component: "MongoOutboxEventPublisher" }),
+		),
 		businessMetrics: businessMetrics ?? new OtelBusinessMetrics(),
 	};
 }

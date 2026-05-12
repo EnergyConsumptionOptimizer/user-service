@@ -5,8 +5,15 @@ import { EventEnvelope } from "@infrastructure/events/EventEnvelope";
 import { OutboxEvent } from "@infrastructure/events/OutboxEvent";
 import { mongoSessionContext } from "@infrastructure/persistence/mongo/mongoSessionContext";
 import { trace } from "@opentelemetry/api";
+import type { Logger } from "pino";
 
 export class MongoOutboxEventPublisher implements EventPublisher {
+	readonly #logger?: Logger;
+
+	constructor(logger?: Logger) {
+		this.#logger = logger;
+	}
+
 	async publish(event: DomainEvent): Promise<void> {
 		const session = mongoSessionContext.getStore();
 		if (!session) {
@@ -22,6 +29,16 @@ export class MongoOutboxEventPublisher implements EventPublisher {
 			eventId: randomUUID(),
 			correlationId: activeSpan?.spanContext().traceId,
 		});
+
+		this.#logger?.debug(
+			{
+				eventType: envelope.event.eventType,
+				aggregateId: envelope.event.aggregateId,
+				eventId: envelope.eventId,
+				correlationId: envelope.correlationId,
+			},
+			"publishing outbox event",
+		);
 
 		await OutboxEvent.create(
 			[

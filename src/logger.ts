@@ -20,7 +20,13 @@ export function createLogger(config: LoggerConfig): Logger {
 	}
 
 	return pino({
+		name: config.appName,
 		level: config.logLevel,
+		base: undefined,
+		redact: ["uri", "password"],
+		formatters: {
+			level: (label, number) => ({ level: number, level_name: label }),
+		},
 		transport: { targets },
 	});
 }

@@ -4,7 +4,11 @@ import express, { type Router } from "express";
 import type { Logger } from "pino";
 import pinoHttp from "pino-http";
 
-const IGNORED_PATHS = new Set(["/health", "/metrics"]);
+const IGNORED_PATHS = new Set([
+	"/health",
+	"/metrics",
+	"/api/internal/auth/verify",
+]);
 
 export function createApp(
 	mainRouter: Router,
@@ -16,7 +20,12 @@ export function createApp(
 
 	app.use(
 		pinoHttp({
-			logger,
+			logger: logger.child({ component: "HTTP" }),
+			customLogLevel: (_req, res, err) => {
+				if (res.statusCode >= 500 || err) return "error";
+				if (res.statusCode >= 400) return "warn";
+				return "info";
+			},
 			autoLogging: {
 				ignore: (req) => IGNORED_PATHS.has(req.url ?? ""),
 			},
@@ -27,7 +36,7 @@ export function createApp(
 	app.use(cookieParser());
 
 	app.use(mainRouter);
-	app.use(createErrorHandler(logger));
+	app.use(createErrorHandler(logger.child({ component: "ErrorHandler" })));
 
 	return app;
 }

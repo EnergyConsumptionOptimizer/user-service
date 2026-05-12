@@ -17,7 +17,9 @@ export const EnvSchema = z.object({
 	JWT_SECRET_KEY: z.string().default("change-me-in-production"),
 	JWT_EXPIRES_IN: DurationString.default("1h"),
 	JWT_REFRESH_EXPIRES_IN: DurationString.default("7d"),
-	LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
+	LOG_LEVEL: z
+		.enum(["trace", "debug", "info", "warn", "error", "fatal"])
+		.default("info"),
 	RESET_CODE: z.string().default("123456"),
 	NAME: z.string().default("user-service"),
 	SEED_USERS: z
