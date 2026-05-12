@@ -72,7 +72,6 @@ export interface UserService {
 		readonly username: string;
 	}): Promise<GetUserByUsernameResponse>;
 
-	// TODO - we have to write getUsersByRole instead
 	getHouseholdUsers(): Promise<UserOutput[]>;
 
 	updateUsername(args: {
