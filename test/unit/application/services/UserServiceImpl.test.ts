@@ -17,7 +17,7 @@ import { UserRenamedEvent } from "@domain/events/UserRenamedEvent";
 import type { UserRepository } from "@domain/ports/UserRepository";
 import type { UniqueUsernameChecker } from "@domain/services/UniqueUsernameChecker";
 import { UserRoles } from "@domain/value/UserRole";
-import { aUser, validId, validUsername } from "@test/helpers/domainFactories";
+import { aUser, validId, validUsername } from "@test/domainFactories";
 import { beforeEach, describe, expect, it } from "vitest";
 import { type MockProxy, mock } from "vitest-mock-extended";
 

@@ -7,7 +7,7 @@ import type { PasswordHasher } from "@application/ports/out/PasswordHasher";
 import type { TokenService } from "@application/ports/out/TokenService";
 import { AuthServiceImpl } from "@application/services/AuthServiceImpl";
 import type { UserRepository } from "@domain/ports/UserRepository";
-import { aUser } from "@test/helpers/domainFactories";
+import { aUser } from "@test/domainFactories";
 import { beforeEach, describe, expect, it } from "vitest";
 import { type MockProxy, mock } from "vitest-mock-extended";
 

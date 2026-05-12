@@ -3,11 +3,11 @@ import { UserCreatedEvent } from "@domain/events/UserCreatedEvent";
 import { UserDeletedEvent } from "@domain/events/UserDeletedEvent";
 import { UserRenamedEvent } from "@domain/events/UserRenamedEvent";
 import {
-	ROLE,
+	HOUSEHOLD_ROLE,
 	validId,
 	validPassword,
 	validUsername,
-} from "@test/helpers/domainFactories";
+} from "@test/domainFactories";
 import { describe, expect, it } from "vitest";
 
 describe("User Entity", () => {
@@ -17,13 +17,13 @@ describe("User Entity", () => {
 			const username = validUsername();
 			const password = validPassword();
 
-			const user = User.create(id, username, password, ROLE);
+			const user = User.create(id, username, password, HOUSEHOLD_ROLE);
 
 			expect(user).toBeInstanceOf(User);
 			expect(user.id).toBe(id);
 			expect(user.username).toBe(username);
 			expect(user.hashedPassword).toBe(password);
-			expect(user.role).toBe(ROLE);
+			expect(user.role).toBe(HOUSEHOLD_ROLE);
 
 			const events = user.pullDomainEvents();
 			expect(events).toHaveLength(1);
@@ -31,7 +31,7 @@ describe("User Entity", () => {
 			expect((events[0] as UserCreatedEvent).payload).toEqual({
 				userId: id.value,
 				username: username.value,
-				role: ROLE,
+				role: HOUSEHOLD_ROLE,
 			});
 		});
 	});
@@ -42,7 +42,7 @@ describe("User Entity", () => {
 				validId(),
 				validUsername(),
 				validPassword(),
-				ROLE,
+				HOUSEHOLD_ROLE,
 			);
 
 			expect(result).toBeInstanceOf(User);
@@ -56,7 +56,7 @@ describe("User Entity", () => {
 				validId(),
 				validUsername("oldname"),
 				validPassword(),
-				ROLE,
+				HOUSEHOLD_ROLE,
 			);
 			user.pullDomainEvents();
 
@@ -82,7 +82,7 @@ describe("User Entity", () => {
 				validId(),
 				validUsername(),
 				validPassword(),
-				ROLE,
+				HOUSEHOLD_ROLE,
 			);
 
 			const newPassword = validPassword("new-hash");
@@ -98,7 +98,7 @@ describe("User Entity", () => {
 				validId(),
 				validUsername(),
 				validPassword(),
-				ROLE,
+				HOUSEHOLD_ROLE,
 			);
 			user.pullDomainEvents();
 
@@ -113,8 +113,18 @@ describe("User Entity", () => {
 	describe("equals()", () => {
 		it("should return true for users with the same id", () => {
 			const id = validId();
-			const u1 = User.create(id, validUsername("u1"), validPassword(), ROLE);
-			const u2 = User.create(id, validUsername("u2"), validPassword(), ROLE);
+			const u1 = User.create(
+				id,
+				validUsername("u1"),
+				validPassword(),
+				HOUSEHOLD_ROLE,
+			);
+			const u2 = User.create(
+				id,
+				validUsername("u2"),
+				validPassword(),
+				HOUSEHOLD_ROLE,
+			);
 
 			expect(u1.equals(u2)).toBe(true);
 		});
@@ -124,13 +134,13 @@ describe("User Entity", () => {
 				validId("id-1"),
 				validUsername("u1"),
 				validPassword(),
-				ROLE,
+				HOUSEHOLD_ROLE,
 			);
 			const u2 = User.create(
 				validId("id-2"),
 				validUsername("u2"),
 				validPassword(),
-				ROLE,
+				HOUSEHOLD_ROLE,
 			);
 
 			expect(u1.equals(u2)).toBe(false);

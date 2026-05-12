@@ -16,7 +16,7 @@ export function validPassword(value = "hashed-pass"): HashedPassword {
 	return HashedPassword.of(value) as HashedPassword;
 }
 
-export const ROLE = UserRoles.HOUSEHOLD;
+export const HOUSEHOLD_ROLE = UserRoles.HOUSEHOLD;
 
 export function aUser(overrides?: {
 	id?: UserId;
@@ -27,7 +27,7 @@ export function aUser(overrides?: {
 		overrides?.id ?? validId(),
 		overrides?.username ?? validUsername(),
 		validPassword(),
-		overrides?.role ?? ROLE,
+		overrides?.role ?? HOUSEHOLD_ROLE,
 	);
 }
 
@@ -40,6 +40,6 @@ export function aNewUser(overrides?: {
 		overrides?.id ?? validId(),
 		overrides?.username ?? validUsername(),
 		validPassword(),
-		overrides?.role ?? ROLE,
+		overrides?.role ?? HOUSEHOLD_ROLE,
 	);
 }

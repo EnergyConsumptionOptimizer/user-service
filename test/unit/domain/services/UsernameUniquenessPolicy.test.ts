@@ -5,7 +5,7 @@ import {
 import type { UserRepository } from "@domain/ports/UserRepository";
 import { UsernameUniquenessPolicy } from "@domain/services/UsernameUniquenessPolicy";
 import { UserId } from "@domain/value/UserId";
-import { aUser, validId, validUsername } from "@test/helpers/domainFactories";
+import { aUser, validId, validUsername } from "@test/domainFactories";
 import { beforeEach, describe, expect, it } from "vitest";
 import { type MockProxy, mock } from "vitest-mock-extended";
 
