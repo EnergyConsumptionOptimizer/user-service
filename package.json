@@ -5,8 +5,9 @@
   },
   "scripts": {
     "clean": "rimraf dist",
-    "build": "tsc && tsc-alias",
-    "start": "node dist/server.js",
+    "build": "tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "start": "node dist/src/server.js",
     "start:dev": "tsx watch --tsconfig tsconfig.json src/server.ts",
     "test": "vitest run && dependency-cruiser src --config .dependency-cruiser.js",
     "test:unit": "vitest run src/test/unit",
