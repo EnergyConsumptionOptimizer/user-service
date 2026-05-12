@@ -5,28 +5,37 @@ import pino from "pino";
 export type LoggerConfig = Pick<Config, "logLevel" | "appName">;
 
 export function createLogger(config: LoggerConfig): Logger {
+	const isOtelEnabled =
+		!!process.env.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT ||
+		!!process.env.OTEL_EXPORTER_OTLP_ENDPOINT;
+
 	const targets: TransportTargetOptions[] = [
-		{ target: "pino/file", options: { destination: 1 } },
+		{
+			target: "pino/file",
+			options: { destination: 1 },
+		},
 	];
 
-	if (
-		process.env.OTEL_EXPORTER_OTLP_LOGS_ENDPOINT ||
-		process.env.OTEL_EXPORTER_OTLP_ENDPOINT
-	) {
+	if (isOtelEnabled) {
 		targets.push({
 			target: "pino-opentelemetry-transport",
 			options: { loggerName: config.appName },
 		});
 	}
 
-	return pino({
+	const options: pino.LoggerOptions = {
 		name: config.appName,
 		level: config.logLevel,
 		base: undefined,
 		redact: ["uri", "password"],
-		formatters: {
-			level: (label, number) => ({ level: number, level_name: label }),
-		},
 		transport: { targets },
-	});
+	};
+
+	if (!isOtelEnabled) {
+		options.formatters = {
+			level: (label, number) => ({ level: number, level_name: label }),
+		};
+	}
+
+	return pino(options);
 }
