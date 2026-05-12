@@ -50,6 +50,7 @@ dist/
 *.js
 *.js.map
 *.d.ts
+!.dependency-cruiser.js
 
 # Node.js dependencies
 node_modules/
