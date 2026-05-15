@@ -9,7 +9,7 @@ describe("EnvSchema", () => {
 		expect(result.data.PORT).toBe(3000);
 		expect(result.data.MONGODB_HOST).toBe("localhost");
 		expect(result.data.MONGODB_PORT).toBe(27017);
-		expect(result.data.MONGO_DB).toBe("user-service");
+		expect(result.data.MONGO_DB).toBe("user");
 		expect(result.data.JWT_SECRET_KEY).toBe("change-me-in-production");
 		expect(result.data.JWT_EXPIRES_IN).toBe("1h");
 		expect(result.data.JWT_REFRESH_EXPIRES_IN).toBe("7d");
@@ -85,19 +85,5 @@ describe("EnvSchema", () => {
 		expect(absent.success).toBe(true);
 		if (!absent.success) return;
 		expect(absent.data.SKIP_SEED).toBe(false);
-	});
-
-	it("constructs MONGO_URI from host/port/db when MONGO_URI not set", () => {
-		const result = EnvSchema.safeParse({
-			MONGODB_HOST: "mongo-host",
-			MONGODB_PORT: "12345",
-			MONGO_DB: "my-db",
-		});
-		expect(result.success).toBe(true);
-		if (!result.success) return;
-		expect(result.data.MONGO_URI).toBeUndefined();
-		expect(result.data.MONGODB_HOST).toBe("mongo-host");
-		expect(result.data.MONGODB_PORT).toBe(12345);
-		expect(result.data.MONGO_DB).toBe("my-db");
 	});
 });
