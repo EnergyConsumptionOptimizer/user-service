@@ -10,10 +10,9 @@ const DurationString = z
 
 export const EnvSchema = z.object({
 	PORT: z.coerce.number().default(3000),
-	MONGO_URI: z.string().optional(),
 	MONGODB_HOST: z.string().default("localhost"),
 	MONGODB_PORT: z.coerce.number().default(27017),
-	MONGO_DB: z.string().default("user-service"),
+	MONGO_DB: z.string().default("user"),
 	JWT_SECRET_KEY: z.string().default("change-me-in-production"),
 	JWT_EXPIRES_IN: DurationString.default("1h"),
 	JWT_REFRESH_EXPIRES_IN: DurationString.default("7d"),
@@ -53,9 +52,7 @@ const env = result.data;
 export const config = {
 	port: env.PORT,
 	mongo: {
-		uri:
-			env.MONGO_URI ??
-			`mongodb://${env.MONGODB_HOST}:${env.MONGODB_PORT}/${env.MONGO_DB}`,
+		uri: `mongodb://${env.MONGODB_HOST}:${env.MONGODB_PORT}/${env.MONGO_DB}`,
 	},
 	jwt: {
 		secret: env.JWT_SECRET_KEY,
