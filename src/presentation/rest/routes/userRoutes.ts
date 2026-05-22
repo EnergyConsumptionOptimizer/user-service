@@ -1,7 +1,6 @@
 import { UserRoles } from "@domain/value/UserRole";
 import type { UserController } from "@presentation/rest/controllers/UserController";
 import {
-	forwardAuth,
 	requireOwnershipOrAdmin,
 	requireRole,
 } from "@presentation/rest/middleware/auth";
@@ -16,8 +15,6 @@ import { Router } from "express";
 
 export function userRoutes(userController: UserController): Router {
 	const router = Router();
-
-	router.use(forwardAuth);
 
 	router
 		.route("/")

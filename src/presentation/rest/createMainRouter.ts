@@ -1,6 +1,9 @@
 import type { AuthController } from "@presentation/rest/controllers/AuthController";
 import type { UserController } from "@presentation/rest/controllers/UserController";
-import type { createTokenAuth } from "@presentation/rest/middleware/auth";
+import {
+	type createTokenAuth,
+	forwardAuth,
+} from "@presentation/rest/middleware/auth";
 import { validate } from "@presentation/rest/middleware/validate";
 import { authRoutes } from "@presentation/rest/routes/authRoutes";
 import { internalAuthRoutes } from "@presentation/rest/routes/internalAuthRoutes";
@@ -25,20 +28,26 @@ export function createMainRouter(
 		});
 	});
 
+	// Public (no authentication)
 	router.use("/api/auth", authRoutes(authController));
-	router.use("/api/users", userRoutes(userController));
-
 	router.post(
 		"/api/admin/reset-password",
 		validate(ResetAdminPasswordSchema),
 		(req, res) => userController.resetAdminPassword(req, res),
 	);
 
+	// Internal (service‑to‑service, no authentication)
+	router.use("/api/internal/users", internalUserRoutes(userController));
+
+	// Token‑authenticated (JWT cookie verification)
 	router.use(
 		"/api/internal/auth",
-		internalAuthRoutes(authController, tokenAuth),
+		tokenAuth,
+		internalAuthRoutes(authController),
 	);
-	router.use("/api/internal/users", internalUserRoutes(userController));
+
+	// Forwarded‑auth (headers from API gateway)
+	router.use("/api/users", forwardAuth, userRoutes(userController));
 
 	return router;
 }
