@@ -1,7 +1,6 @@
 import { User } from "@domain/entity/User";
 import { UserCreatedEvent } from "@domain/events/UserCreatedEvent";
 import { UserDeletedEvent } from "@domain/events/UserDeletedEvent";
-import { UserRenamedEvent } from "@domain/events/UserRenamedEvent";
 import {
 	HOUSEHOLD_ROLE,
 	validId,
@@ -51,7 +50,7 @@ describe("User Entity", () => {
 	});
 
 	describe("changeUsername()", () => {
-		it("should update username and emit UserRenamedEvent", () => {
+		it("should update username", () => {
 			const user = User.create(
 				validId(),
 				validUsername("oldname"),
@@ -64,15 +63,6 @@ describe("User Entity", () => {
 			user.changeUsername(newUsername);
 
 			expect(user.username).toBe(newUsername);
-
-			const events = user.pullDomainEvents();
-			expect(events).toHaveLength(1);
-			expect(events[0]).toBeInstanceOf(UserRenamedEvent);
-			const evt = events[0] as UserRenamedEvent;
-			expect(evt.payload).toMatchObject({
-				oldUsername: "oldname",
-				newUsername: "newname",
-			});
 		});
 	});
 

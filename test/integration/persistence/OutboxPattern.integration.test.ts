@@ -98,27 +98,6 @@ describe("Outbox Pattern (integration)", () => {
 		expect(outboxDocs).toHaveLength(0);
 	});
 
-	it("publishes a UserRenamedEvent via the outbox", async () => {
-		const user = aNewUser({
-			id: validId("user-1"),
-			username: validUsername("oldname"),
-		});
-		await saveWithOutbox(user);
-
-		const saved = await repository.findById(validId("user-1"));
-		if (!saved) return;
-		saved.changeUsername(validUsername("newname"));
-		await saveWithOutbox(saved);
-
-		const outboxDocs = await findAllOutboxEvents();
-		expect(outboxDocs).toHaveLength(2);
-		expect(outboxDocs[0].eventType).toBe("UserCreatedEvent");
-		expect(outboxDocs[1]).toMatchObject({
-			eventType: "UserRenamedEvent",
-			payload: { oldUsername: "oldname", newUsername: "newname" },
-		});
-	});
-
 	it("publishes a UserDeletedEvent via the outbox", async () => {
 		const user = aNewUser({
 			id: validId("user-1"),
@@ -176,10 +155,9 @@ describe("Outbox Pattern (integration)", () => {
 		});
 
 		const outboxDocs = await findAllOutboxEvents();
-		expect(outboxDocs).toHaveLength(3);
+		expect(outboxDocs).toHaveLength(2);
 		expect(outboxDocs.map((d) => d.eventType)).toEqual([
 			"UserCreatedEvent",
-			"UserRenamedEvent",
 			"UserDeletedEvent",
 		]);
 	});

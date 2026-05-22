@@ -13,7 +13,6 @@ import {
 } from "@domain/errors";
 import { UserCreatedEvent } from "@domain/events/UserCreatedEvent";
 import { UserDeletedEvent } from "@domain/events/UserDeletedEvent";
-import { UserRenamedEvent } from "@domain/events/UserRenamedEvent";
 import type { UserRepository } from "@domain/ports/UserRepository";
 import type { UniqueUsernameChecker } from "@domain/services/UniqueUsernameChecker";
 import { UserRoles } from "@domain/value/UserRole";
@@ -214,7 +213,7 @@ describe("UserServiceImpl", () => {
 	});
 
 	describe("updateUsername()", () => {
-		it("should update username and publish event via outbox", async () => {
+		it("should update username", async () => {
 			const user = aUser({ username: validUsername("oldname") });
 			repository.findById.mockResolvedValue(user);
 			usernamePolicy.ensureAvailable.mockResolvedValue(undefined);
@@ -226,12 +225,7 @@ describe("UserServiceImpl", () => {
 
 			expect(result).toMatchObject({ username: "newname" });
 			expect(usernamePolicy.ensureAvailable).toHaveBeenCalled();
-			expect(uow.executeTransactionally).toHaveBeenCalled();
 			expect(repository.save).toHaveBeenCalled();
-			expect(eventPublisher.publish).toHaveBeenCalledTimes(1);
-			expect(eventPublisher.publish).toHaveBeenCalledWith(
-				expect.any(UserRenamedEvent),
-			);
 			expect(metrics.recordUserUpdate).toHaveBeenCalled();
 		});
 

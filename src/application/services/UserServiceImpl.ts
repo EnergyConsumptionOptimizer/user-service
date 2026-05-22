@@ -138,14 +138,7 @@ export class UserServiceImpl implements UserService {
 		if (uniquenessResult instanceof Error) return uniquenessResult;
 
 		user.changeUsername(newUsername);
-
-		// Outbox Pattern
-		await this.#uow.executeTransactionally(async () => {
-			await this.#repository.save(user);
-			for (const event of user.pullDomainEvents()) {
-				await this.#eventPublisher.publish(event);
-			}
-		});
+		await this.#repository.save(user);
 
 		this.#metrics.recordUserUpdate();
 		return toOutput(user);

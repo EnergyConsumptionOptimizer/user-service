@@ -1,7 +1,6 @@
 import { AggregateRoot } from "@domain/entity/AggregateRoot";
 import { UserCreatedEvent } from "@domain/events/UserCreatedEvent";
 import { UserDeletedEvent } from "@domain/events/UserDeletedEvent";
-import { UserRenamedEvent } from "@domain/events/UserRenamedEvent";
 import type { HashedPassword } from "@domain/value/HashedPassword";
 import type { UserId } from "@domain/value/UserId";
 import type { Username } from "@domain/value/Username";
@@ -55,11 +54,7 @@ export class User extends AggregateRoot {
 	}
 
 	changeUsername(newUsername: Username): void {
-		const oldUsername = this.#username;
 		this.#username = newUsername;
-		this.addDomainEvent(
-			new UserRenamedEvent(this.id, oldUsername, newUsername),
-		);
 	}
 
 	changePassword(newPassword: HashedPassword): void {
