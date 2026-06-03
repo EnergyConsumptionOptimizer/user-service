@@ -6,6 +6,8 @@ import { Router } from "express";
 export function internalUserRoutes(userController: UserController): Router {
 	const router = Router();
 
+	router.get("/", (req, res) => userController.getHouseholdUsers(req, res));
+
 	router.get("/:username", validate(GetUserByUsernameSchema), (req, res) =>
 		userController.getUserByUsername(req, res),
 	);
